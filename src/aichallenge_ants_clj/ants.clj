@@ -349,6 +349,7 @@
           cols (option this :cols)]
       (for [idx (range (* rows cols))] [(quot idx rows) (mod idx cols)]))))
 
+;; make-world :: World
 (defn make-world []
   (let [defaults {:ts (System/currentTimeMillis)
                   :phase "initial"
@@ -364,6 +365,7 @@
                   :cols 20}]
     (World. {} {} #{} #{} #{} defaults)))
 
+;; feed-world :: World -> String -> World
 (defn feed-world [world input]
   (binding [*in* (java.io.BufferedReader. (java.io.StringReader. input))]
     (update world)))

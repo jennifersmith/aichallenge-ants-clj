@@ -2,7 +2,7 @@
   [:gen-class]
   (:use aichallenge-ants-clj.ants))
 
-;; ## MyBot template.
+;; ## MyBot sample.
 ;;
 ;; Single method defrecord for now.
 (defrecord MyBot []
@@ -14,7 +14,8 @@
               :while (> (remaining world) 10)] ; if enough time
         (if-let [dir (first (filter (comp (partial passable? world)
                                           (partial locate world f)) dirs))]
-          (issue world f dir))))))
+          (issue world f dir)))
+      this)))
 
 ;; make-bot :: MyBot
 (defn make-bot [] (MyBot.))

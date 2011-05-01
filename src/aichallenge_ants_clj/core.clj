@@ -7,7 +7,7 @@
 ;; Entry point of the program. If you keep to the template this does
 ;; not need to be changed.
 ;;
-;; [& strings] -> nil
+;; -main :: [[String]] -> nil
 (defn -main [& args]
   (let [[world bot] (run (make-world) (make-bot))
         last-world (update world)]

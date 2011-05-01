@@ -2530,13 +2530,12 @@ $(document).ready(function() {
 </div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.2.1</td></tr><tr><td class="dep-name">org.clojure/clojure-contrib</td><td class="dotted"><hr /></td><td class="dep-version">1.2.0</td></tr></table></div><div class="dependencies"><h3>dev dependencies</h3><table><tr><td class="dep-name">marginalia</td><td class="dotted"><hr /></td><td class="dep-version">0.5.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#aichallenge-ants-clj.core">aichallenge-ants-clj.core</a></li><li><a href="#aichallenge-ants-clj.my-bot">aichallenge-ants-clj.my-bot</a></li><li><a href="#aichallenge-ants-clj.ants">aichallenge-ants-clj.ants</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#aichallenge-ants-clj.core" name="aichallenge-ants-clj.core"><h1 class="project-name">aichallenge-ants-clj.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(ns aichallenge-ants-clj.core
   [:gen-class]
-  [:use aichallenge-ants-clj.ants]
-  [:use aichallenge-ants-clj.my-bot])</pre></tr><tr><td class="docs"><h2>Main loop.</h2>
+  [:use aichallenge-ants-clj.ants aichallenge-ants-clj.my-bot])</pre></tr><tr><td class="docs"><h2>Main loop.</h2>
 
 <p>Entry point of the program. If you keep to the template this does
 not need to be changed.</p>
 
-<p>[&amp; strings] &rarr; nil</p>
+<p>-main :: [[String]] &rarr; nil</p>
 </td><td class="codes" /><pre class="brush: clojure">(defn -main [& args]
   (let [[world bot] (run (make-world) (make-bot))
         last-world (update world)]
@@ -2546,19 +2545,27 @@ not need to be changed.</p>
       (println last-world))))</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#aichallenge-ants-clj.my-bot" name="aichallenge-ants-clj.my-bot"><h1 class="project-name">aichallenge-ants-clj.my-bot</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(ns aichallenge-ants-clj.my-bot
   [:gen-class]
-  (:use [aichallenge-ants-clj.ants] :reload))</pre></tr><tr><td class="docs"><h2>MyBot template.</h2>
+  (:use aichallenge-ants-clj.ants))</pre></tr><tr><td class="docs"><h2>MyBot sample.</h2>
 
 <p>Single method defrecord for now.</p>
 </td><td class="codes" /><pre class="brush: clojure">(defrecord MyBot []
   AntsBot
   ;; do-turn :: MyBot -> AntsWorld -> MyBot
-  (do-turn [this world] this))</pre></tr><tr><td class="docs"><p>make-bot :: MyBot</p>
+  (do-turn [this world]
+    (let [dirs [:N :E :S :W]]
+      (doseq [f (friendly world) ; enumerate friendly coords
+              :while (> (remaining world) 10)] ; if enough time
+        (if-let [dir (first (filter (comp (partial passable? world)
+                                          (partial locate world f)) dirs))]
+          (issue world f dir)))
+      this)))</pre></tr><tr><td class="docs"><p>make-bot :: MyBot</p>
 </td><td class="codes" /><pre class="brush: clojure">(defn make-bot [] (MyBot.))</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#aichallenge-ants-clj.ants" name="aichallenge-ants-clj.ants"><h1 class="project-name">aichallenge-ants-clj.ants</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(ns aichallenge-ants-clj.ants
   [:gen-class])</pre></tr><tr><td class="docs"><h1>AI Google Challenge -- Ants!</h1>
 </td><td class="codes" /></tr><tr><td class="docs"><h2>Ants constants and contracts.</h2>
 </td><td class="codes" /><pre class="brush: clojure">(def contracts {:landscape (hash-set :land :water :fog)
-                :direction (hash-set :N :E :S :W)
+                :direction (hash-map :N [-1 0], :E [0  1],
+                                     :S [ 1 0], :W [0 -1])
                 :unit      (hash-set :friend :enemy)
                 :event     (hash-set :food)
                 :coords    [:row :col]})</pre></tr><tr><td class="docs"><h2>Parsing helpers.</h2>
@@ -2629,6 +2636,8 @@ not need to be changed.</p>
   (distance [this orig dest] "Shortest distance on the torus.")
   ;; direction :: AntsWorld -> [int, int] -> [int, int] -> [direction]
   (direction [this orig dest] "Direction on the torus.")
+  ;; locate :: AntsWorld -> [int, int] -> Direction -> [int, int]
+  (locate [this coords dir] "Return coords of destination.")
   ;; visible? :: AntsWorld -> [int, int] -> Bool
   (visible? [this coords] "Coords seen in this turn?")
   ;; seen? :: AntsWorld -> [int, int] -> Bool
@@ -2670,26 +2679,32 @@ not need to be changed.</p>
                   :props (persistent! props)})))
   ;; land! :: World -> [int, int] -> World
   (land! [this coords]
-    (do (assoc! board coords :land) (conj! intel coords) this))
+    (into this {:board (assoc! board coords :land)
+                :intel (conj! intel coords)}))
   ;; water! :: World -> [int, int] -> World
   (water! [this coords]
-    (do (assoc! board coords :water) (conj! intel coords) this))
+    (into this {:board (assoc! board coords :water)
+                :intel (conj! intel coords)}))
   ;; unit! :: World -> [int, int] -> int -> World
   (unit! [this coords owner]
-    (do (assoc! board coords :land) (assoc! units coords owner)
-        (conj! intel coords) this))
+    (into this {:board (assoc! board coords :land)
+                :units (assoc! units coords owner)
+                :intel (conj! intel coords)}))
   ;; dead! :: World -> [int, int] -> int -> World
   (dead! [this coords owner]
-    (do (assoc! board coords :land) (conj! frags (conj coords owner))
-        (conj! intel coords) this))
+    (into this {:board (assoc! board coords :land)
+                :frags (conj! frags (conj coords owner))
+                :intel (conj! intel coords)}))
   ;; food! :: World -> [int, int] -> World
   (food! [this coords]
-    (do (assoc! board coords :land) (conj! foods coords)
-        (conj! intel coords) this))
+    (into this {:board (assoc! board coords :land)
+                :foods (conj! foods coords)
+                :intel (conj! intel coords)}))
   ;; prop! :: World -> sym -> a -> World
   (prop! [this a-key a-val]
     (let [kw (keyword a-key)]
-      (do (assoc! props kw a-val) (conj! intel kw) this)))
+      (into this {:props (assoc! props kw a-val)
+                  :intel (conj! intel kw)})))
   AntsWorld
   ;; volatile :: World -> World
   (volatile [this]
@@ -2740,14 +2755,11 @@ not need to be changed.</p>
     (do (println "go") (.flush System/out) this))
   ;; run :: World -> AntsBot -> [World, AntsBot]
   (run [this bot]
-    (let [this-n (update this)
-          this-n (end-turn this-n)]
+    (let [this-n (end-turn (update this))]
       (loop [bot-n bot this-n this-n]
         (if (not= "end" (option this-n :phase))
-          (let [bot-n (do-turn bot-n this-n)
-                this-n (end-turn this-n)]
-                (recur bot-n this-n))
-              [this-n bot-n]))))
+          (recur (do-turn bot-n this-n) (end-turn this-n))
+          [this-n bot-n]))))
   ;; option :: World -> sym -> a
   (option [this sym]
     (get props sym))
@@ -2818,6 +2830,21 @@ not need to be changed.</p>
                        (== ccol tc-sc) [:E :W]
                        (pos? sc-tc) (if (> tc-sc ccol) [:W] [:E])
                        :else (if (> tc-sc ccol) [:E] [:W]))))))
+  ;; locate :: World -> [int, int] -> Direction -> [int, int]
+  (locate [this coords dir]
+    (let [{:keys [direction]} contracts]
+      (if (not (contains? direction dir))
+        (throw (Exception. (format "Unknown direction: %s."
+                                   dir)))
+        (let [max-r (option this :rows)
+              max-c (option this :cols)
+              [sr sc] coords
+              [dr dc] (get direction dir)
+              tr (+ sr dr)
+              tr (if (< tr 0) (+ max-r tr) (mod tr max-r))
+              tc (+ sc dc)
+              tc (if (< tc 0) (+ max-c tc) (mod tc max-c))]
+          [tr tc]))))
   ;; visible? :: World -> [int, int] -> Bool
   (visible? [this coords]
     (contains? update coords))
@@ -2838,7 +2865,7 @@ not need to be changed.</p>
   (coord-space [this]
     (let [rows (option this :rows)
           cols (option this :cols)]
-      (for [idx (range (* rows cols))] [(quot idx rows) (mod idx cols)]))))</pre></tr><tr><td class="docs">
+      (for [idx (range (* rows cols))] [(quot idx rows) (mod idx cols)]))))</pre></tr><tr><td class="docs"><p>make-world :: World</p>
 </td><td class="codes" /><pre class="brush: clojure">(defn make-world []
   (let [defaults {:ts (System/currentTimeMillis)
                   :phase "initial"
@@ -2852,7 +2879,7 @@ not need to be changed.</p>
                   :turn -1
                   :rows 20
                   :cols 20}]
-    (World. {} {} #{} #{} #{} defaults)))</pre></tr><tr><td class="docs">
+    (World. {} {} #{} #{} #{} defaults)))</pre></tr><tr><td class="docs"><p>feed-world :: World &rarr; String &rarr; World</p>
 </td><td class="codes" /><pre class="brush: clojure">(defn feed-world [world input]
   (binding [*in* (java.io.BufferedReader. (java.io.StringReader. input))]
     (update world)))</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/fogus/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a><div id="floating-toc"><ul><li class="floating-toc-li" id="floating-toc_aichallenge-ants-clj.core">aichallenge-ants-clj.core</li><li class="floating-toc-li" id="floating-toc_aichallenge-ants-clj.my-bot">aichallenge-ants-clj.my-bot</li><li class="floating-toc-li" id="floating-toc_aichallenge-ants-clj.ants">aichallenge-ants-clj.ants</li></ul></div></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
