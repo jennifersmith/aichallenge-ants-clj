@@ -20,7 +20,7 @@ All that's left is to zip the directory and upload.
 
 ## License
 
-Copyright (C) 2010 SMG
+Copyright (C) 2011 Slawek Gwizdowski
 
 Distributed under the Eclipse Public License, the same as Clojure.
 
