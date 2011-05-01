@@ -1,8 +1,13 @@
 (ns aichallenge-ants-clj.core
   [:gen-class]
-  [:use aichallenge-ants-clj.ants aichallenge-ants-clj.my-bot])
+  [:use aichallenge-ants-clj.ants]
+  [:use aichallenge-ants-clj.my-bot])
 
-
+;; ## Main loop.
+;;
+;; Entry point of the program. If you keep to the template this does
+;; not need to be changed.
+;;
 ;; [& strings] -> nil
 (defn -main [& args]
   (let [[world bot] (run (make-world) (make-bot))

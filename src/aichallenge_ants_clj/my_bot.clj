@@ -10,5 +10,6 @@
   ;; do-turn :: MyBot -> AntsWorld -> MyBot
   (do-turn [this world] this))
 
+;; make-bot :: MyBot
 (defn make-bot [] (MyBot.))
 

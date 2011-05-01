@@ -2526,12 +2526,17 @@ $(document).ready(function() {
     ul.css('margin-top', '0px')
 
 })
-</script><title>aichallenge-ants-clj -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name">aichallenge-ants-clj</h1><h2 class="project-version">0.0.1</h2><br /><p>AI Challenge 'Ants' -- Winter/Spring 2011</p>
-</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.2.0</td></tr><tr><td class="dep-name">org.clojure/clojure-contrib</td><td class="dotted"><hr /></td><td class="dep-version">1.2.0</td></tr></table></div><div class="dependencies"><h3>dev dependencies</h3><table><tr><td class="dep-name">marginalia</td><td class="dotted"><hr /></td><td class="dep-version">0.5.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#aichallenge-ants-clj.core">aichallenge-ants-clj.core</a></li><li><a href="#aichallenge-ants-clj.my-bot">aichallenge-ants-clj.my-bot</a></li><li><a href="#aichallenge-ants-clj.ants">aichallenge-ants-clj.ants</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#aichallenge-ants-clj.core" name="aichallenge-ants-clj.core"><h1 class="project-name">aichallenge-ants-clj.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</script><title>aichallenge-ants-clj -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name">aichallenge-ants-clj</h1><h2 class="project-version">0.0.2</h2><br /><p>AI Challenge 'Ants' -- Winter/Spring 2011</p>
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.2.1</td></tr><tr><td class="dep-name">org.clojure/clojure-contrib</td><td class="dotted"><hr /></td><td class="dep-version">1.2.0</td></tr></table></div><div class="dependencies"><h3>dev dependencies</h3><table><tr><td class="dep-name">marginalia</td><td class="dotted"><hr /></td><td class="dep-version">0.5.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#aichallenge-ants-clj.core">aichallenge-ants-clj.core</a></li><li><a href="#aichallenge-ants-clj.my-bot">aichallenge-ants-clj.my-bot</a></li><li><a href="#aichallenge-ants-clj.ants">aichallenge-ants-clj.ants</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#aichallenge-ants-clj.core" name="aichallenge-ants-clj.core"><h1 class="project-name">aichallenge-ants-clj.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(ns aichallenge-ants-clj.core
   [:gen-class]
   [:use aichallenge-ants-clj.ants]
-  [:use aichallenge-ants-clj.my-bot])</pre></tr><tr><td class="docs"><p>[&amp; strings] &rarr; nil</p>
+  [:use aichallenge-ants-clj.my-bot])</pre></tr><tr><td class="docs"><h2>Main loop.</h2>
+
+<p>Entry point of the program. If you keep to the template this does
+not need to be changed.</p>
+
+<p>[&amp; strings] &rarr; nil</p>
 </td><td class="codes" /><pre class="brush: clojure">(defn -main [& args]
   (let [[world bot] (run (make-world) (make-bot))
         last-world (update world)]
@@ -2547,7 +2552,7 @@ $(document).ready(function() {
 </td><td class="codes" /><pre class="brush: clojure">(defrecord MyBot []
   AntsBot
   ;; do-turn :: MyBot -> AntsWorld -> MyBot
-  (do-turn [this world] this))</pre></tr><tr><td class="docs">
+  (do-turn [this world] this))</pre></tr><tr><td class="docs"><p>make-bot :: MyBot</p>
 </td><td class="codes" /><pre class="brush: clojure">(defn make-bot [] (MyBot.))</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#aichallenge-ants-clj.ants" name="aichallenge-ants-clj.ants"><h1 class="project-name">aichallenge-ants-clj.ants</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(ns aichallenge-ants-clj.ants
   [:gen-class])</pre></tr><tr><td class="docs"><h1>AI Google Challenge -- Ants!</h1>
