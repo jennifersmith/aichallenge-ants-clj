@@ -25,6 +25,7 @@ a 10 9 1
 go
 this-does-not-happen")
 
+
 (print "creating world -> ")
 (def bare-world (time (make-world)))
 
@@ -70,6 +71,10 @@ this-does-not-happen")
   (is (= [:S :E] (direction bare-world [0 0] [1 19])) "South/east.")
   (is (= [:E] (direction bare-world [0 0] [0 19])) "East.")
   (is (= [:N :E] (direction bare-world [0 0] [19 19])) "North/east.")
+  ;(is (= [1 2] (locate bare-world [2 2] :N)) "Going North from [2 2]")
+  ;(is (= [2 3] (locate bare-world [2 2] :E)) "Going East from [2 2]")
+  ;(is (= [3 2] (locate bare-world [2 2] :S)) "Going South from [2 2]")
+  ;(is (= [2 1] (locate bare-world [2 2] :W)) "Going West from [2 2]")
   (is (every? true? (map (fn [c] (= :fog (terrain bare-world c)))
                          (coord-space bare-world)))
       "All tiles are fogged.")
@@ -122,4 +127,9 @@ this-does-not-happen")
                          [[7 9] [10 8] [10 9] [6 5]]))
       "Implied land tiles are land tiles."))
 
+(deftest issue-test
+  (is (= "o 0 0 N\n" (with-out-str (issue turn-world [0 0] :N)))
+      "Issuing order.")
+  (is (= "go\n" (with-out-str (end-turn turn-world)))
+      "Ending turn."))
 

@@ -6,7 +6,8 @@
 
 ;; ## Ants constants and contracts.
 (def contracts {:landscape (hash-set :land :water :fog)
-                :direction (hash-set :N :E :S :W)
+                :direction (hash-map :N [-1 0], :E [0  1],
+                                     :S [ 1 0], :W [0 -1])
                 :unit      (hash-set :friend :enemy)
                 :event     (hash-set :food)
                 :coords    [:row :col]})
@@ -85,6 +86,8 @@
   (distance [this orig dest] "Shortest distance on the torus.")
   ;; direction :: AntsWorld -> [int, int] -> [int, int] -> [direction]
   (direction [this orig dest] "Direction on the torus.")
+  ;; locate :: AntsWorld -> [int, int] -> Direction -> [int, int]
+  (locate [this coords dir] "Return coords of destination.")
   ;; visible? :: AntsWorld -> [int, int] -> Bool
   (visible? [this coords] "Coords seen in this turn?")
   ;; seen? :: AntsWorld -> [int, int] -> Bool
@@ -131,31 +134,37 @@
 
   ;; land! :: World -> [int, int] -> World
   (land! [this coords]
-    (do (assoc! board coords :land) (conj! intel coords) this))
+    (into this {:board (assoc! board coords :land)
+                :intel (conj! intel coords)}))
 
   ;; water! :: World -> [int, int] -> World
   (water! [this coords]
-    (do (assoc! board coords :water) (conj! intel coords) this))
+    (into this {:board (assoc! board coords :water)
+                :intel (conj! intel coords)}))
 
   ;; unit! :: World -> [int, int] -> int -> World
   (unit! [this coords owner]
-    (do (assoc! board coords :land) (assoc! units coords owner)
-        (conj! intel coords) this))
+    (into this {:board (assoc! board coords :land)
+                :units (assoc! units coords owner)
+                :intel (conj! intel coords)}))
 
   ;; dead! :: World -> [int, int] -> int -> World
   (dead! [this coords owner]
-    (do (assoc! board coords :land) (conj! frags (conj coords owner))
-        (conj! intel coords) this))
+    (into this {:board (assoc! board coords :land)
+                :frags (conj! frags (conj coords owner))
+                :intel (conj! intel coords)}))
 
   ;; food! :: World -> [int, int] -> World
   (food! [this coords]
-    (do (assoc! board coords :land) (conj! foods coords)
-        (conj! intel coords) this))
+    (into this {:board (assoc! board coords :land)
+                :foods (conj! foods coords)
+                :intel (conj! intel coords)}))
 
   ;; prop! :: World -> sym -> a -> World
   (prop! [this a-key a-val]
     (let [kw (keyword a-key)]
-      (do (assoc! props kw a-val) (conj! intel kw) this)))
+      (into this {:props (assoc! props kw a-val)
+                  :intel (conj! intel kw)})))
 
   AntsWorld
 
@@ -213,14 +222,11 @@
 
   ;; run :: World -> AntsBot -> [World, AntsBot]
   (run [this bot]
-    (let [this-n (update this)
-          this-n (end-turn this-n)]
+    (let [this-n (end-turn (update this))]
       (loop [bot-n bot this-n this-n]
         (if (not= "end" (option this-n :phase))
-          (let [bot-n (do-turn bot-n this-n)
-                this-n (end-turn this-n)]
-                (recur bot-n this-n))
-              [this-n bot-n]))))
+          (recur (do-turn bot-n this-n) (end-turn this-n))
+          [this-n bot-n]))))
  
   ;; option :: World -> sym -> a
   (option [this sym]
@@ -300,7 +306,23 @@
                        (== ccol tc-sc) [:E :W]
                        (pos? sc-tc) (if (> tc-sc ccol) [:W] [:E])
                        :else (if (> tc-sc ccol) [:E] [:W]))))))
-  
+ 
+  ;; locate :: World -> [int, int] -> Direction -> [int, int]
+  (locate [this coords dir]
+    (let [{:keys [direction]} contracts]
+      (if (not (contains? direction dir))
+        (throw (Exception. (format "Unknown direction: %s."
+                                   dir)))
+        (let [max-r (option this :rows)
+              max-c (option this :cols)
+              [sr sc] coords
+              [dr dc] (get direction dir)
+              tr (+ sr dr)
+              tr (if (< tr 0) (+ max-r tr) (mod tr max-r))
+              tc (+ sc dc)
+              tc (if (< tc 0) (+ max-c tc) (mod tc max-c))]
+          [tr tc]))))
+
   ;; visible? :: World -> [int, int] -> Bool
   (visible? [this coords]
     (contains? update coords))

@@ -1,7 +1,6 @@
 (ns aichallenge-ants-clj.core
   [:gen-class]
-  [:use aichallenge-ants-clj.ants]
-  [:use aichallenge-ants-clj.my-bot])
+  [:use aichallenge-ants-clj.ants aichallenge-ants-clj.my-bot])
 
 ;; ## Main loop.
 ;;
