@@ -5,9 +5,17 @@ AI Challenge 'Ants' -- Winter/Spring 2011
 
 ## Usage
 
-Should be merged with the aichallenge master package at some point.
+Create your bot, adjust `project.clj` to match one provided.
 
-As soon as Clojure support is worked into it.
+Remove compiled artifacts & deps with:
+
+    lein clean
+
+Then fetch the deps from local repo with:
+
+    lein deps
+
+All that's left is to zip the directory and upload.
 
 
 ## License
