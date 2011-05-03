@@ -1,7 +1,7 @@
-(ns aichallenge-ants-clj.test.my-bot
-  (:use [aichallenge-ants-clj.ants] :reload)
-  (:use [aichallenge-ants-clj.my-bot] :reload)
-  (:use [clojure.test]))
+(ns my-bot.test.ai
+  (:use my-bot.ants :reload)
+  (:use my-bot.ai :reload)
+  (:use clojure.test))
 
 (def manual-world
   (-> (make-world)

@@ -1,6 +1,6 @@
-(ns aichallenge-ants-clj.test.ants
-  (:use [aichallenge-ants-clj.ants] :reload)
-  (:use [clojure.test]))
+(ns my-bot.test.ants
+  (:use my-bot.ants :reload)
+  (:use clojure.test))
 
 (def setup-input
 "turn 0

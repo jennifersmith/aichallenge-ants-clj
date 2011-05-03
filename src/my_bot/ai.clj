@@ -1,6 +1,6 @@
-(ns aichallenge-ants-clj.my-bot
-  [:gen-class]
-  (:use aichallenge-ants-clj.ants))
+(ns my-bot.ai
+  (:gen-class)
+  (:use my-bot.ants))
 
 ;; ## MyBot sample.
 ;;

@@ -1,5 +1,5 @@
-(ns aichallenge-ants-clj.ants
-  [:gen-class])
+(ns my-bot.ants
+  (:gen-class))
 
 
 ;; # AI Google Challenge -- Ants!
@@ -187,22 +187,23 @@
   ;; 
   ;; refresh :: World -> World
   (refresh [this]
-    (let [this! (volatile this)
-          {:keys [splitter terminate? water? unit? dead? food?]} tokens]
-      (loop [[X r c o & junk] (splitter (.toLowerCase ^String (read-line)))]
+    (let [{:keys [splitter terminate? water? unit? dead? food?]} tokens]
+      (loop [this! (volatile this)
+             [X r c o & junk] (splitter (.toLowerCase ^String (read-line)))]
         (if (terminate? X) (freeze! this! X) ;; assess view, freeze.
-          (let [row       (when-not (nil? r) (Integer/parseInt r))
-                col       (when-not (nil? c) (Integer/parseInt c))
-                owner     (when-not (nil? o) (Integer/parseInt o))
-                coords    [row col]]
-            (cond
-              (water? X) (water! this! coords)
-              (unit? X)  (unit! this! coords owner)
-              (dead? X)  (dead! this! coords owner)
-              (food? X)  (food! this! coords)
-              (nil? X) nil
-              :else (prop! this! X row))
-            (recur (splitter (.toLowerCase ^String (read-line)))))))))
+          (let [row    (when-not (nil? r) (Integer/parseInt r))
+                col    (when-not (nil? c) (Integer/parseInt c))
+                owner  (when-not (nil? o) (Integer/parseInt o))
+                coords [row col]]
+            (recur
+              (cond
+                (water? X) (water! this! coords)
+                (unit? X)  (unit! this! coords owner)
+                (dead? X)  (dead! this! coords owner)
+                (food? X)  (food! this! coords)
+                (nil? X)   this!
+                :else      (prop! this! X row))
+              (splitter (.toLowerCase ^String (read-line)))))))))
   
   ;; update :: World -> World
   (update [this]
@@ -225,7 +226,7 @@
     (let [this-n (end-turn (update this))]
       (loop [bot-n bot this-n this-n]
         (if (not= "end" (option this-n :phase))
-          (recur (do-turn bot-n this-n) (end-turn this-n))
+          (recur (do-turn bot-n this-n) (end-turn (update this-n)))
           [this-n bot-n]))))
  
   ;; option :: World -> sym -> a
