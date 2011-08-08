@@ -9,15 +9,14 @@
 ;; be fetched during build (which may not be possible in the sandbox).
 (defproject aichallenge-ants-clj "0.0.3"
   :description "AI Challenge 'Ants' -- Winter/Spring 2011"
-  :dependencies [[org.clojure/clojure "1.2.1"]
-                 [org.clojure/clojure-contrib "1.2.0"]]
-  :dev-dependencies [[marginalia "0.5.0"]]
+  :dependencies [[org.clojure/clojure "1.2.1"]]
+  :dev-dependencies [[marginalia "0.5.0"], [midje "1.2.0"], [lein-midje "1.0.3"]]
   :disable-deps-clean true
   :disable-implicit-clean true
   :main my-bot.core
   :aot [my-bot.ants my-bot.ai my-bot.core]
-  :jar-name "MyBot-light.jar"
-  :uberjar-name "MyBot.jar"
+  :jar-name "JBot-light.jar"
+  :uberjar-name "JBot.jar"
   ; feel free to change this for deployment
-  :warn-on-reflection true)
+  :warn-on-reflection false)
 

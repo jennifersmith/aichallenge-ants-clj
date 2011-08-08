@@ -188,6 +188,7 @@
   ;; refresh :: World -> World
   (refresh [this]
     (let [{:keys [splitter terminate? water? unit? dead? food?]} tokens]
+      (println "Ooo")
       (loop [this! (volatile this)
              [X r c o & junk] (splitter (.toLowerCase ^String (read-line)))]
         (if (terminate? X) (freeze! this! X) ;; assess view, freeze.
