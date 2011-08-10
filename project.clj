@@ -13,8 +13,7 @@
   :dev-dependencies [[marginalia "0.5.0"], [midje "1.2.0"], [lein-midje "1.0.3"]]
   :disable-deps-clean true
   :disable-implicit-clean true
-  :main my-bot.core
-  :aot [my-bot.ants my-bot.ai my-bot.core]
+  :main jbot.core
   :jar-name "JBot-light.jar"
   :uberjar-name "JBot.jar"
   ; feel free to change this for deployment

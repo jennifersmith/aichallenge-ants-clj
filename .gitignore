@@ -1,2 +1,5 @@
 game_logs
 lib
+*.jar
+*.swp
+classes

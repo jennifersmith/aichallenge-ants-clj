@@ -6,5 +6,5 @@
     "hahaha sucka"
   )
 (defn -main [& args]
-  (let [parameters (read-parameters *in*)]))
+  (let [parameters (read-parameters *in*)] "todo : play game"))
 
