@@ -7,8 +7,8 @@
   (:import (java.io StringReader)))
 
 (defn create-reader [& lines]
-  (new StringReader (string/join "/n" lines)))
+  (new StringReader (string/join "\n" lines)))
 
 
 (fact
-  (read-parameters (create-reader "Foo bar" "Baz 123"))=> {"Foo" "bar", "Baz" "123"})
+  (read-parameters (create-reader "Foo bar" "Baz 123", "ready"))=> {"Foo" "bar", "Baz" "123"})
