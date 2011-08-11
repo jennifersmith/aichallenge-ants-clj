@@ -31,6 +31,9 @@
   (let [lines (read-upto "go" reader)]
     (map (fn [line] (apply read-turn-input (string/split #"\s" line))) lines)))
 
+(defn read-turn [reader]
+  (let [turn-header (.readLine (new BufferedReader reader))]
+    {:turn-header (-> (second (string/split #"\s" turn-header)) Integer/parseInt)}))
 (defn -main [& args]
   (let [parameters (read-parameters *in*)] 
     (println "go")

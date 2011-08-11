@@ -21,3 +21,8 @@
    {:player "1" :type :live-ant :pos {:x 10 :y 10}}
    {:player "4" :type :dead-ant :pos {:x 6 :y 6}}
     :in-any-order))
+
+(fact 
+  (read-turn (create-reader "turn 1" "f 1 2" "a 1 2 4")) => {:turn-number 1 :turn-data :foo}
+  (provided
+    (read-turn-data anything) => :foo))
