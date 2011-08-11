@@ -26,3 +26,6 @@
   (read-turn (create-reader "turn 1" "f 1 2" "a 1 2 4")) => {:turn-number 1 :turn-data :foo}
   (provided
     (read-turn-data anything) => :foo))
+
+(fact "end should be signified by a nil turn"
+      (read-turn (create-reader "end"))=> nil)

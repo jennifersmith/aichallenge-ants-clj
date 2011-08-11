@@ -2,6 +2,8 @@
   (:gen-class)
   (:require [clojure.pprint :as pp] [clojure.contrib.logging :as logs] [ clojure.contrib.string :as string])
   (:import (java.io BufferedReader)))
+(defn tokenize [line]
+  (string/split #"\s" line))
 
 (defn read-upto [stop-token reader]
   (let [reader (new BufferedReader reader)]
@@ -14,9 +16,10 @@
 (defn read-parameters [reader]
   (let [lines (read-upto "ready" reader)]
     (reduce (fn [result line] 
-           (apply (partial assoc result) (string/split #"\s" line)))
+           (apply (partial assoc result) (tokenize line)))
            {}           
             lines)))
+
 (def code->event-type 
   {"a" :live-ant
    "d" :dead-ant
@@ -29,13 +32,26 @@
 
 (defn read-turn-data [reader]
   (let [lines (read-upto "go" reader)]
-    (map (fn [line] (apply read-turn-input (string/split #"\s" line))) lines)))
+    (map (fn [line] (apply read-turn-input (tokenize line))) lines)))
+
+;; Should I maybe assert "turn" as in "turn 2" and "end" as in the end of the game?
+(defn read-turn-header 
+  ([turn-message turn-number] (Integer/parseInt turn-number))
+  ([end-message] nil))
 
 (defn read-turn [reader]
-  (let [turn-header (.readLine (new BufferedReader reader))]
-    {:turn-header (-> (second (string/split #"\s" turn-header)) Integer/parseInt)}))
+  (if-let [turn-header (apply read-turn-header (tokenize (.readLine (new BufferedReader reader))))]
+    {:turn-number turn-header
+     :turn-data (read-turn-data reader)}))
+
 (defn -main [& args]
   (let [parameters (read-parameters *in*)] 
     (println "go")
-    
-    (read-upto "end" *in*)))
+    (loop []
+      (if-let [turn (read-turn *in*)]
+        (do
+          (println "go")
+          (recur))
+        (do
+          (read-line)
+          (read-line))))))
