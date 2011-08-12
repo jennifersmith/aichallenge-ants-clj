@@ -19,8 +19,8 @@
           result
           (recur (cons line result)))))))
 
-(defn read-parameters [reader]
-  (let [lines (read-upto "ready" reader)]
+(defn read-parameters []
+  (let [lines (read-upto "ready" nil)]
     (reduce (fn [result line] 
            (apply (partial assoc result) (tokenize line)))
            {}           
@@ -36,8 +36,8 @@
   ([event-type x y player] (assoc (read-turn-input event-type x y) :player player))
   ([event-type x y] {:type (code->event-type event-type) :pos {:x (Integer/parseInt x) :y (Integer/parseInt y)}}))
 
-(defn read-turn-data [reader]
-  (let [lines (read-upto "go" reader)]
+(defn read-turn-data []
+  (let [lines (read-upto "go" nil)]
     (map (fn [line] (apply read-turn-input (tokenize line))) lines)))
 
 ;; Should I maybe assert "turn" as in "turn 2" and "end" as in the end of the game?
