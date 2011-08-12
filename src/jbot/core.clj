@@ -5,10 +5,16 @@
 (defn tokenize [line]
   (string/split #"\s" line))
 
+(defn dump [& data]
+  (spit "dump.log" (apply str (cons "\n" (interpose " " data))) :append true))
+
+(defmacro dbg[x] `(let [x# ~x] (dump '~x "=" x#) x#))
+
 (defn read-upto [stop-token reader]
   (let [reader (new BufferedReader reader)]
     (loop [result []]
-      (let [line (.readLine reader)]
+      (let [line (read-line)] ;; shhhh
+        (dump line)
         (if (or (nil? line) (= stop-token line))
           result
           (recur (cons line result)))))))
@@ -35,22 +41,26 @@
     (map (fn [line] (apply read-turn-input (tokenize line))) lines)))
 
 ;; Should I maybe assert "turn" as in "turn 2" and "end" as in the end of the game?
-(defn read-turn-header 
-  ([turn-message turn-number] (Integer/parseInt turn-number))
+(defn read-turn-header
+  ([turn-message turn-number]
+  (dump turn-message turn-number)
+   (Integer/parseInt turn-number))
   ([end-message] nil))
 
 (defn read-turn [reader]
-  (if-let [turn-header (apply read-turn-header (tokenize (.readLine (new BufferedReader reader))))]
+  (if-let [turn-header (apply read-turn-header (tokenize (read-line)))]
     {:turn-number turn-header
-     :turn-data (read-turn-data reader)}))
+     :turn-data (dbg (read-turn-data reader))}))
 
 (defn -main [& args]
   (let [parameters (read-parameters *in*)] 
-    (println "go")
+    (do (println "go") (.flush System/out)) 
     (loop []
+
       (if-let [turn (read-turn *in*)]
         (do
           (println "go")
+          (.flush System/out)
           (recur))
         (do
           (read-line)
