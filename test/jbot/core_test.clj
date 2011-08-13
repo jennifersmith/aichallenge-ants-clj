@@ -4,6 +4,15 @@
         clojure.test
         midje.sweet)
   (:require [clojure.string :as string]))
+(fact
+  "read-one reads and tokenizes just one line"
+  (read-one) => ["A" "B"]
+  (provided (read-line) => "A B"))
+
+(fact
+  "read-upto reads till a given stop-token and tokenises the lines"
+  (read-upto "foo") => [["A" "B" "C"]["D" "E" "F"]]
+  (provided (read-line) =streams=> ["A B C" "D E F" "foo"]))
 
 (fact
   (read-parameters)=> {"Foo" "bar", "Baz" "123"}

@@ -29,24 +29,30 @@
   ([event-type x y] {:type (code->event-type event-type) :pos (vec (map parse-int  [x y]))}))
 
 ;; in stream reading stuff
-(defn read-upto [stop-token]
-  (take-while #(not (= stop-token %)) (repeatedly read-line)))
+;; for ever and ever and ever
+(defn read-input []
+  (map tokenize (repeatedly read-line)))
+(defn read-one [] (first (read-input)))
 
+(defn read-upto [stop-token]
+  (take-while #(not (some #{stop-token} %)) (read-input)))
+
+;; combining parsing and reading stream stuff
 (defn read-parameters []
   (let [lines (read-upto "ready")]
     (reduce (fn [result line] 
-           (apply (partial assoc result) (tokenize line)))
+           (apply (partial assoc result) line))
            {}           
             lines)))
 
 (defn read-turn-data []
   (let [lines (read-upto "go")]
-    (map (fn [line] (apply parse-turn-input (tokenize line))) lines)))
+    (map (fn [line] (apply parse-turn-input line)) lines)))
 
 (defn read-turn []
-  (if-let [turn-header (apply read-turn-header (tokenize (read-line)))]
+  (if-let [turn-header (apply read-turn-header (read-one))]
     {:turn-number turn-header
-     :turn-data (dbg (read-turn-data))}))
+     :turn-data (read-turn-data)}))
 
 ;; Main!
  
