@@ -55,7 +55,6 @@
      :turn-data (read-turn-data)}))
 
 ;; Main!
- 
 (defn -main [& args]
   (let [parameters (read-parameters)] 
     (do (println "go") (.flush System/out)) 
@@ -63,6 +62,7 @@
 
       (if-let [turn (read-turn)]
         (do
+          (dump turn)
           (println "go")
           (.flush System/out)
           (recur))
