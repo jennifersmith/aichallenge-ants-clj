@@ -8,16 +8,20 @@
 (fact
   (read-parameters)=> {"Foo" "bar", "Baz" "123"}
   (provided (read-line) =streams=> ["Foo bar" "Baz 123" "ready"]))
-
+(fact 
+  "parsing food locations"
+  (parse-turn-input "f" "20" "20") => {:type :food :pos [20 20]})
 (fact
-  (read-turn-data ) =>
-  (just
-   {:type :food :pos {:x 20 :y 20}}
-   {:type :water :pos {:x 10 :y 10}}
-   {:player "1" :type :live-ant :pos {:x 10 :y 10}}
-   {:player "4" :type :dead-ant :pos {:x 6 :y 6}}
-    :in-any-order)
-  (provided (read-line) =streams=> ["f 20 20" "w 10 10" "a 10 10 1" "d 6 6 4" "go"]))
+  "water..."
+  (parse-turn-input "w" "15" "15") => {:type :water :pos [15 15]})
+(fact
+  "live ant"
+  (parse-turn-input "a" "15" "15" "bob") => {:type :ant :pos [15 15] :player "bob"})
+(fact 
+  "dead ant (dead-ant dead-ant dead-ant dead-ant to the tune of the pink panther)"
+  (parse-turn-input "d" "23" "16" "fred") => {:type :dead-ant :pos [23 16] :player "fred"})
+
+
 (fact 
   (read-turn) => {:turn-number 1 :turn-data :foo}
   (provided

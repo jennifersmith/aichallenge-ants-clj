@@ -8,12 +8,13 @@
 
 ;; string utils
 (defn tokenize [line] (string/split #"\s" line))
+(defn parse-int [value] (Integer/parseInt value)) ;; I dont think can use a java function as a clojure fn right in map and stuff like that?
 
 ;; Protocol parsing stuff (not as in clojure protocols...) - this stuff takes tokenized strings and gets the goodies out
 ;; Should I maybe assert "turn" as in "turn 2" and "end" as in the end of the game?
 
 (def code->event-type 
-  {"a" :live-ant
+  {"a" :ant
    "d" :dead-ant
    "f" :food
    "w" :water})
@@ -23,9 +24,9 @@
   ([end-message] nil))
 
 
-(defn read-turn-input 
-  ([event-type x y player] (assoc (read-turn-input event-type x y) :player player))
-  ([event-type x y] {:type (code->event-type event-type) :pos {:x (Integer/parseInt x) :y (Integer/parseInt y)}}))
+(defn parse-turn-input 
+  ([event-type x y player] (assoc (parse-turn-input event-type x y) :player player))
+  ([event-type x y] {:type (code->event-type event-type) :pos (vec (map parse-int  [x y]))}))
 
 ;; in stream reading stuff
 (defn read-upto [stop-token]
@@ -45,7 +46,7 @@
 
 (defn read-turn-data []
   (let [lines (read-upto "go")]
-    (map (fn [line] (apply read-turn-input (tokenize line))) lines)))
+    (map (fn [line] (apply parse-turn-input (tokenize line))) lines)))
 
 (defn read-turn []
   (if-let [turn-header (apply read-turn-header (tokenize (read-line)))]
