@@ -30,12 +30,7 @@
 
 ;; in stream reading stuff
 (defn read-upto [stop-token]
-  (loop [result []]
-      (let [line (read-line)] 
-        (dump line)
-        (if (or (nil? line) (= stop-token line))
-          result
-          (recur (cons line result))))))
+  (take-while #(not (= stop-token %)) (repeatedly read-line)))
 
 (defn read-parameters []
   (let [lines (read-upto "ready")]
