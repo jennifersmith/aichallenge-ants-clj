@@ -3,3 +3,4 @@ lib
 *.jar
 *.swp
 classes
+dump.log
