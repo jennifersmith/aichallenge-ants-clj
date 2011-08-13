@@ -10,17 +10,16 @@
 
 (defmacro dbg[x] `(let [x# ~x] (dump '~x "=" x#) x#))
 
-(defn read-upto [stop-token reader]
-  (let [reader (new BufferedReader reader)]
+(defn read-upto [stop-token]
     (loop [result []]
-      (let [line (read-line)] ;; shhhh
+      (let [line (read-line)] 
         (dump line)
         (if (or (nil? line) (= stop-token line))
           result
-          (recur (cons line result)))))))
+          (recur (cons line result))))))
 
 (defn read-parameters []
-  (let [lines (read-upto "ready" nil)]
+  (let [lines (read-upto "ready")]
     (reduce (fn [result line] 
            (apply (partial assoc result) (tokenize line)))
            {}           
@@ -37,7 +36,7 @@
   ([event-type x y] {:type (code->event-type event-type) :pos {:x (Integer/parseInt x) :y (Integer/parseInt y)}}))
 
 (defn read-turn-data []
-  (let [lines (read-upto "go" nil)]
+  (let [lines (read-upto "go")]
     (map (fn [line] (apply read-turn-input (tokenize line))) lines)))
 
 ;; Should I maybe assert "turn" as in "turn 2" and "end" as in the end of the game?
@@ -47,17 +46,17 @@
    (Integer/parseInt turn-number))
   ([end-message] nil))
 
-(defn read-turn [reader]
+(defn read-turn []
   (if-let [turn-header (apply read-turn-header (tokenize (read-line)))]
     {:turn-number turn-header
-     :turn-data (dbg (read-turn-data reader))}))
+     :turn-data (dbg (read-turn-data))}))
 
 (defn -main [& args]
-  (let [parameters (read-parameters *in*)] 
+  (let [parameters (read-parameters)] 
     (do (println "go") (.flush System/out)) 
     (loop []
 
-      (if-let [turn (read-turn *in*)]
+      (if-let [turn (read-turn)]
         (do
           (println "go")
           (.flush System/out)
