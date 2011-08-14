@@ -1,3 +1,4 @@
+require 'zip/zip'
 
 task :midje do 
 	sh "lein midje"
@@ -9,7 +10,9 @@ end
 
 task :pack do
 	File.delete "entry.zip" if File.exists? "entry.zip"
-	sh "cd src/jbot"
-	sh "zip entry.zip *.clj"
-	sh "cd ../../"
+	Zip::ZipFile.open("entry.zip", Zip::ZipFile::CREATE) do |zipfile|
+		Dir.glob("src/jbot/*.clj").each  do |file|
+			zipfile.get_output_stream(File.basename(file)) {|f| f.puts File.read(file)}
+		end
+	end
 end
