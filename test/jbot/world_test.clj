@@ -12,3 +12,8 @@
 (fact "build on top of existing knowledge"
       (increase-knowledge-of :food [{:type :food :pos [1 2]} {:type :water :pos [2 1]}] [[1 1] [5 5]])
       => [[1 1] [5 5] [1 2]])
+
+(fact "remove existing knowledge"
+      (forget-about :foo [{:type :foo :pos [5 6]} {:type :foo :pos [7 7]}] [[5 6] [7 7] [19 19]])
+      => [[19 19]])
+                                                                      
