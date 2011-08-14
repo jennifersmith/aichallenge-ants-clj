@@ -1,4 +1,4 @@
-(ns jbot.core (:import (java.io BufferedReader)))
+(ns core (:import (java.io BufferedReader)))
 
 ;; too lazy to split into files!
 (defn dump [& data](spit "dump.log" (apply str (cons "\n" (interpose " " data))) :append true))

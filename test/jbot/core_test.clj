@@ -1,6 +1,6 @@
 (ns jbot.core_test
   (:use 
-        jbot.core
+        core
         clojure.test
         midje.sweet)
   (:require [clojure.string :as string]))
