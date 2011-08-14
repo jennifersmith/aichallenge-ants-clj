@@ -1,3 +1,5 @@
+require 'zip/zip'
+
 task :midje do 
 	sh "lein midje"
 end
@@ -8,7 +10,15 @@ end
 
 task :archive => :pack do
 	File.delete "entry.zip" if File.exists? "entry.zip"
-	sh "zip entry.zip entry/*.clj"
+	Zip::ZipFile.open("entry.zip", Zip::ZipFile::CREATE) do |zipfile|
+		Dir.glob("entry/*.clj").each  do |file|
+			zipfile.get_output_stream(File.basename(file)) {|f| f.puts File.read(file)}
+		end
+	end
+end
+
+task :show_archive do
+	sh "unzip -l \"$@\" entry.zip"
 end
 
 task :pack do
