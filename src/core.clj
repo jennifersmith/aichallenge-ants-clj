@@ -47,7 +47,14 @@
   (if-let [turn-header (apply read-turn-header (read-one))]
     {:turn-number turn-header
      :turn-data (seq (map (partial apply parse-turn-input) (read-upto "go")))}))
+;; and finally... render!
 
+(defn render-move [{:keys [pos direction]}]
+  (str 
+    "o "
+    (apply str (interpose " " pos))
+    " "
+    direction))
 ;; Main!
 (defn -main [& args]
   (let [parameters (read-parameters) ] 

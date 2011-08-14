@@ -43,3 +43,7 @@
   (read-turn)=> nil
   (provided (read-line) =streams=> ["end"]))
 
+(fact
+  "should be able to render a move"
+  (render-move {:pos [40 14] :direction "N"})
+  => "o 40 14 N")
