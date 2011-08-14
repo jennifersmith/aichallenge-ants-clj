@@ -1,4 +1,4 @@
-(ns core (:use world) (:import (java.io BufferedReader)))
+(ns core (:use world ai) (:import (java.io BufferedReader)))
 
 ;; too lazy to split into files!
 (defn dump [& data](spit "dump.log" (apply str (cons "\n" (interpose " " data))) :append true))
@@ -62,6 +62,9 @@
     (loop [world (init-world)]
       (if-let [turn (read-turn)] 
         (do
+          (doseq [line (map render-move (next-move world))]
+            (println line)
+            )
           (println "go")
           (.flush System/out)
           (recur (increment-world world (:turn-data turn))))
