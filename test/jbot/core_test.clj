@@ -32,10 +32,11 @@
 
 
 (fact 
-  (read-turn) => {:turn-number 1 :turn-data :foo}
+  (read-turn) => {:turn-number 1 :turn-data [:one :two]}
   (provided
-    (read-turn-data) => :foo
-    (read-line) =streams=> ["turn 1"]))
+    (parse-turn-input "data1") => :one
+    (parse-turn-input "data2") => :two
+    (read-line) =streams=> ["turn 1" "data1" "data2" "go"]))
 
 (fact 
   "end should be signified by a nil turn"

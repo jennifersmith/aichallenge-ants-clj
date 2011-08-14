@@ -1,13 +1,11 @@
-(ns jbot.core
-  (:gen-class)
-  (:require [clojure.pprint :as pp] [clojure.contrib.logging :as logs] [ clojure.contrib.string :as string])
-  (:import (java.io BufferedReader)))
+(ns jbot.core (:import (java.io BufferedReader)))
+
 ;; too lazy to split into files!
 (defn dump [& data](spit "dump.log" (apply str (cons "\n" (interpose " " data))) :append true))
 (defmacro dbg[x] `(let [x# ~x] (dump '~x "=" x#) x#))
 
 ;; string utils
-(defn tokenize [line] (string/split #"\s" line))
+(defn tokenize [line] (seq (.split #"\s" line)))
 (defn parse-int [value] (Integer/parseInt value)) ;; I dont think can use a java function as a clojure fn right in map and stuff like that?
 
 ;; Protocol parsing stuff (not as in clojure protocols...) - this stuff takes tokenized strings and gets the goodies out
@@ -45,14 +43,10 @@
            {}           
             lines)))
 
-(defn read-turn-data []
-  (let [lines (read-upto "go")]
-    (map (fn [line] (apply parse-turn-input line)) lines)))
-
 (defn read-turn []
   (if-let [turn-header (apply read-turn-header (read-one))]
     {:turn-number turn-header
-     :turn-data (read-turn-data)}))
+     :turn-data (map (partial apply parse-turn-input) (read-upto "go"))}))
 
 ;; Main!
 (defn -main [& args]

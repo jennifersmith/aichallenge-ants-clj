@@ -1,1 +1,2 @@
-./test_bot.sh lein trampoline run
+
+./test_bot.sh "java -cp /Users/jsmith/dev/googlai-ants/aichallenge-ants-clj/lib/clojure-1.2.1.jar:/Users/jsmith/dev/googlai-ants/aichallenge-ants-clj/src:. clojure.main /Users/jsmith/dev/googlai-ants/aichallenge-ants-clj/src/jbot/MyBot.clj"
