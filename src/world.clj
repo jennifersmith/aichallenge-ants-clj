@@ -5,9 +5,9 @@
 (defn pivot [filter-key required-values data]
   (zipmap required-values (map
     (fn [current-key]
-      (filter
+      (seq(filter
         (fn [current] (= current-key (get current filter-key)))
-        data))
+        data)))
     required-values)))
 
 (defn init-world [] {:player-name "0" :food [] :water [] :my-ants[]})

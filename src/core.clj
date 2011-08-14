@@ -1,4 +1,4 @@
-(ns core (:import (java.io BufferedReader)))
+(ns core (:use world) (:import (java.io BufferedReader)))
 
 ;; too lazy to split into files!
 (defn dump [& data](spit "dump.log" (apply str (cons "\n" (interpose " " data))) :append true))
@@ -19,7 +19,8 @@
 
 (defn read-turn-header
   ([turn-message turn-number] (Integer/parseInt turn-number))
-  ([end-message] nil))
+  ([end-message] nil)
+  ([too many & args] (throw (Exception. (apply str (flatten (cons [too many] args)))))))
 
 
 (defn parse-turn-input 
@@ -33,8 +34,7 @@
 (defn read-one [] (first (read-input)))
 
 (defn read-upto [stop-token]
-  (take-while #(not (some #{stop-token} %)) (read-input)))
-
+  (doall (take-while #(not (some #{stop-token} %)) (read-input))))
 ;; combining parsing and reading stream stuff
 (defn read-parameters []
   (let [lines (read-upto "ready")]
@@ -46,20 +46,18 @@
 (defn read-turn []
   (if-let [turn-header (apply read-turn-header (read-one))]
     {:turn-number turn-header
-     :turn-data (map (partial apply parse-turn-input) (read-upto "go"))}))
+     :turn-data (seq (map (partial apply parse-turn-input) (read-upto "go")))}))
 
 ;; Main!
 (defn -main [& args]
-  (let [parameters (read-parameters)] 
+  (let [parameters (read-parameters) ] 
     (do (println "go") (.flush System/out)) 
-    (loop []
-
-      (if-let [turn (read-turn)]
+    (loop [world (init-world)]
+      (if-let [turn (read-turn)] 
         (do
-          (dump turn)
           (println "go")
           (.flush System/out)
-          (recur))
+          (recur (increment-world world (:turn-data turn))))
         (do
           (read-line)
           (read-line))))))
