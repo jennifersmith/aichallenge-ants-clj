@@ -53,3 +53,12 @@
      [[98 98] [99 98] [0 98]]
      [[98 99] [99 99] [0 99]]
      [[98 0] [99 0] [0 0]]])
+
+
+(fact (get-surroundings {:water [[1 2] [10 10] [11 10] [12 10]] :dimensions [50 100]} [11 9])
+      => [
+          [nil nil nil]
+          [nil nil nil]
+          [:water :water :water]
+          ])
+

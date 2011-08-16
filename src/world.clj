@@ -26,9 +26,6 @@
       (assoc :my-ants ants))))
 
 
-(defn wrapped-coordinate [[grid-x grid-y] x y]
-  [(mod x grid-x) (mod y grid-y)])
-
 (defn get-surrounding-coords [[grid-x grid-y] [point-x point-y]]
   (partition 3 
              (for [
@@ -36,4 +33,17 @@
                    x (map (partial + point-x) (range -1 2))]
                [(mod x grid-x) (mod y grid-y)])))
     
-
+;; better impl later
+(defn get-contents-for-row [environment row]
+  (map (fn [point]
+         (if ((set (:water environment)) point)
+           :water
+           nil))
+        row))
+(defn get-surroundings [world position]
+  (let 
+    [
+     environment { :water (:water world)}] ;; todo make the sets of points a sub property of world ratehr than having water just on it
+    (map
+      (partial get-contents-for-row environment)
+      (get-surrounding-coords (:dimensions world) position))))
