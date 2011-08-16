@@ -55,11 +55,12 @@
     (apply str (interpose " " pos))
     " "
     direction))
+
 ;; Main!
 (defn -main [& args]
   (let [parameters (read-parameters) ] 
     (do (println "go") (.flush System/out)) 
-    (loop [world (init-world)]
+    (loop [world (init-world parameters)]
       (if-let [turn (read-turn)] 
         (do
           (doseq [line (map render-move (next-move world))]
