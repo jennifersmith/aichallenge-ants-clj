@@ -5,12 +5,12 @@
 (defn pivot [filter-key required-values data]
   (zipmap required-values (map
     (fn [current-key]
-      (seq(filter
+      (filter
         (fn [current] (= current-key (get current filter-key)))
-        data)))
+        data))
     required-values)))
 
-(defn init-world [] {:player-name "0" :food [] :water [] :my-ants[]})
+(defn init-world [{:keys [rows cols] :as params}] {:player-name "0" :dimensions [rows cols]  :food [] :water [] :my-ants[]})
 
 (defn increment-world [current-state new-information]
   (let [
@@ -24,4 +24,16 @@
       (assoc :water (concat (:water current-state) new-water))
       (assoc :food new-food)
       (assoc :my-ants ants))))
+
+
+(defn wrapped-coordinate [[grid-x grid-y] x y]
+  [(mod x grid-x) (mod y grid-y)])
+
+(defn get-surrounding-coords [[grid-x grid-y] [point-x point-y]]
+  (partition 3 
+             (for [
+                   y (map (partial + point-y) (range -1 2)) 
+                   x (map (partial + point-x) (range -1 2))]
+               [(mod x grid-x) (mod y grid-y)])))
+    
 
