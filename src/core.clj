@@ -59,7 +59,7 @@
     (do (println "go") (.flush System/out)) 
     (loop [world (init-world parameters)]
       (if-let [turn (read-turn)] 
-        (do
+        (let [world (increment-world world (:turn-data turn))]
           (doseq [line (map render-move (next-move world))]
             (dump (vec (:water world)))
             (dump line)
@@ -67,7 +67,7 @@
             )
           (println "go")
           (.flush System/out)
-          (recur (increment-world world (:turn-data turn))))
+          (recur world))
         (do
           (read-line)
           (read-line))))))
