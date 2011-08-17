@@ -10,7 +10,9 @@
         data))
     required-values)))
 
-(defn init-world [{:keys [rows cols] :as params}] {:player-name "0" :dimensions [rows cols]  :food [] :water [] :my-ants[]})
+(defn init-world 
+  [{:keys [rows cols] :as params}] 
+  {:player-name "0" :dimensions [(Integer/parseInt rows) (Integer/parseInt cols)]  :food [] :water [] :my-ants[]})
 
 (defn increment-world [current-state new-information]
   (let [
@@ -26,12 +28,12 @@
       (assoc :my-ants ants))))
 
 
-(defn get-surrounding-coords [[grid-x grid-y] [point-x point-y]]
+(defn get-surrounding-coords [[grid-rows grid-cols] [curr-row curr-col]]
   (partition 3 
              (for [
-                   y (map (partial + point-y) (range -1 2)) 
-                   x (map (partial + point-x) (range -1 2))]
-               [(mod x grid-x) (mod y grid-y)])))
+                   row (map (partial + curr-row) (range -1 2)) 
+                   col (map (partial + curr-col) (range -1 2))]
+               [(mod row grid-rows) (mod col grid-cols)])))
     
 ;; better impl later
 (defn get-contents-for-row [environment row]

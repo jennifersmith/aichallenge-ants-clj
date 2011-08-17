@@ -5,7 +5,7 @@
         clojure.test
         midje.sweet))
 
-(fact (init-world {:rows 20 :cols 10}) => {:player-name "0" :dimensions [20 10] :water [] :food [] :my-ants []})
+(fact (init-world {:rows "20" :cols "10"}) => {:player-name "0" :dimensions [20 10] :water [] :food [] :my-ants []})
 
 (fact "pivoting a set of hashes on a key"
       (pivot :name [:foo :bar] [{:name :boris :age 99} {:name :foo :age 20} {:name :foo :age 50} {:name :bar :age 15} {:name :bar :age 19}])
@@ -38,24 +38,25 @@
 
 (fact (get-surrounding-coords [100 100] [30 16]) =>
       [
-        [[29 15] [30 15] [31 15]]
-        [[29 16] [30 16] [31 16]]
-        [[29 17] [30 17] [31 17]]])
+        [[29 15] [29 16] [29 17]]
+        [[30 15] [30 16] [30 17]]
+        [[31 15] [31 16] [31 17]]])
 
 (fact "can cope with wrapping" (get-surrounding-coords [100 100] [0 0])=>
     [
-     [[99 99] [0 99] [1 99]]
-     [[99 0] [0 0] [1 0]]
-     [[99 1] [0 1] [1 1]]])
+     [[99 99] [99 0] [99 1]]
+     [[0 99]  [0 0] [0 1]]
+     [[1 99]  [1 0] [1 1]]])
 
-(fact "can cope with wrapping" (get-surrounding-coords [100 100] [99 99])=>
+(fact "can cope with wrapping" (get-surrounding-coords [100 50] [99 49])=>
     [
-     [[98 98] [99 98] [0 98]]
-     [[98 99] [99 99] [0 99]]
-     [[98 0] [99 0] [0 0]]])
+     [[98 48] [98 49] [98 0]]
+     [[99 48] [99 49] [99 0]]
+     [[0  48] [0  49] [0 0]]])
 
 
-(fact (get-surroundings {:water [[1 2] [10 10] [11 10] [12 10]] :dimensions [50 100]} [11 9])
+(fact (get-surroundings 
+        {:water [[1 2] [12 8] [12 9] [12 10]] :dimensions [50 100]} [11 9])
       => [
           [nil nil nil]
           [nil nil nil]

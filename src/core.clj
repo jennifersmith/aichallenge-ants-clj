@@ -1,8 +1,4 @@
-(ns core (:use world ai) (:import (java.io BufferedReader)))
-
-;; too lazy to split into files!
-(defn dump [& data](spit "dump.log" (apply str (cons "\n" (interpose " " data))) :append true))
-(defmacro dbg[x] `(let [x# ~x] (dump '~x "=" x#) x#))
+(ns core (:use debug  world ai) (:import (java.io BufferedReader)))
 
 ;; string utils
 (defn tokenize [line] (seq (.split #"\s" line)))
@@ -38,8 +34,8 @@
 ;; combining parsing and reading stream stuff
 (defn read-parameters []
   (let [lines (read-upto "ready")]
-    (reduce (fn [result line] 
-           (apply (partial assoc result) line))
+    (reduce (fn [result [k v]] 
+           (assoc result (keyword k) v))
            {}           
             lines)))
 
@@ -58,12 +54,15 @@
 
 ;; Main!
 (defn -main [& args]
-  (let [parameters (read-parameters) ] 
+  (let [parameters (read-parameters) ]
+    (dump parameters)
     (do (println "go") (.flush System/out)) 
     (loop [world (init-world parameters)]
       (if-let [turn (read-turn)] 
         (do
           (doseq [line (map render-move (next-move world))]
+            (dump (vec (:water world)))
+            (dump line)
             (println line)
             )
           (println "go")

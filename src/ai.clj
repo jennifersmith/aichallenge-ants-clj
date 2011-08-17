@@ -1,4 +1,5 @@
 (ns ai
+  (use debug)
   (:require world))
 ;; The whole point of this exercise
 (defn get-next-passable-direction
@@ -17,6 +18,7 @@
     (fn [{:keys [direction]}] (not (nil? direction)))
   (map
     (fn [ant-pos]
+      (dump "FOR " ant-pos "coords: " (seq (world/get-surrounding-coords (:dimensions world) ant-pos))  " surroundings: "   (seq (world/get-surroundings world ant-pos)))
       {:pos ant-pos :direction (get-next-passable-direction (world/get-surroundings world ant-pos))})
     (:my-ants world))))
 ;; let's hear it for plugability

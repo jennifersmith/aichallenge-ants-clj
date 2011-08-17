@@ -6,6 +6,7 @@ end
 
 task :test_bot => :pack do
 	sh "./test_bot.sh \"java -cp #{Dir.pwd}/lib/clojure-1.2.1.jar:/#{Dir.pwd}/entry:. clojure.main #{Dir.pwd}/entry/MyBot.clj\""
+	sh "cat game_logs/0.replay |pbcopy"
 end
 
 task :archive => :pack do

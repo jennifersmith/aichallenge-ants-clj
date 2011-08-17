@@ -15,7 +15,7 @@
   (provided (read-line) =streams=> ["A B C" "D E F" "foo"]))
 
 (fact
-  (read-parameters)=> {"Foo" "bar", "Baz" "123"}
+  (read-parameters)=> {:Foo "bar" :Baz "123"}
   (provided (read-line) =streams=> ["Foo bar" "Baz 123" "ready"]))
 (fact 
   "parsing food locations"
