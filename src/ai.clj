@@ -21,7 +21,7 @@
         [[_ N _]
          [W _ E]
          [_ S _]]
-        (dbg (world/get-surrounding-coords-1  world ant-pos))
+        (dbg (world/get-surrounding-coords  world ant-pos))
         directions 
           {:N N :E E :S S :W W}
         contents-by-direction
