@@ -54,12 +54,9 @@
      [[99 48] [99 49] [99 0]]
      [[0  48] [0  49] [0 0]]])
 
+(fact "returns what is in the square" 
+    (get-contents {:environment {[10 20] :water}} [5 5]) => nil
+    (get-contents {:environment {[10 20] :water}} [10 20]) => :water)
 
-(fact (get-surroundings 
-        {:water [[1 2] [12 8] [12 9] [12 10]] :dimensions [50 100]} [11 9])
-      => [
-          [nil nil nil]
-          [nil nil nil]
-          [:water :water :water]
-          ])
+
 
