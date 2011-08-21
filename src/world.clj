@@ -10,19 +10,23 @@
 
 (defn init-world 
   [{:keys [rows cols] :as params}] 
-  {:player-name "0" :dimensions [(Integer/parseInt rows) (Integer/parseInt cols)]  :food [] :water [] :my-ants[]})
+  {:player-name "0" :dimensions [(Integer/parseInt rows) (Integer/parseInt cols)]  :environment{} :my-ants[]})
+
+(defn get-player-ants [my-player-name new-information]
+  (map :pos
+       (filter 
+         (fn [{:keys [player type]}]
+           (= [my-player-name :ant] [player type]))
+         new-information)))
 
 (defn increment-world [current-state new-information]
   (let [
-        new-information-by-type (pivot :type [:food :water :ant] new-information)
-        new-water (map :pos (:water new-information-by-type))
-        new-food (map :pos (:food new-information-by-type))
+        new-environment (zipmap (map :pos new-information) (map :type new-information)) 
         player-name (:player-name current-state)
-        ants (map :pos (filter #(= player-name (:player  %)) (:ant new-information-by-type)))
+        ants (get-player-ants player-name new-information)
         ]
     (-> current-state
-      (assoc :water (concat (:water current-state) new-water))
-      (assoc :food new-food)
+      (assoc :environment new-environment)
       (assoc :my-ants ants))))
 
 
