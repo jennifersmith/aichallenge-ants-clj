@@ -10,13 +10,6 @@
 
 (fact (init-world {:rows "20" :cols "10"}) => {:player-name "0" :dimensions [20 10] :environment {} :my-ants[] })
 
-(fact "pivoting a set of hashes on a key"
-      (pivot :name [:foo :bar] [{:name :boris :age 99} {:name :foo :age 20} {:name :foo :age 50} {:name :bar :age 15} {:name :bar :age 19}])
-      => {
-          :foo [{:name :foo :age 20} {:name :foo :age 50}]
-          :bar [{:name :bar :age 15} {:name :bar :age 19}]
-          })
-
 (fact "should be able to use inbound turn data to figure out state of the world"
       (:environment (increment-world {}
                                      [
@@ -40,6 +33,10 @@
 (fact "figures out which ants are mine"
       (:my-ants (increment-world {:player-name "bob"} [{:type :ant :pos [20 20] :player "bob"} {:type :ant :pos [14 15] :player "Henry"} {:type :ant :pos [14 20] :player "bob"}]))
       => (just [14 20] [20 20] :in-any-order))
+
+(fact "holds onto other bits"
+      (increment-world {:foo :bar :baz 2} []) =>
+        (contains  {:foo :bar :baz 2}))
 
 (fact (get-surrounding-coords (world-with-dimensions 100 100) [30 16]) =>
       [
