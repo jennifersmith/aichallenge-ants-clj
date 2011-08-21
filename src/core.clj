@@ -50,8 +50,7 @@
     "o "
     (apply str (interpose " " pos))
     " "
-    direction))
-
+    (.toUpperCase (name direction))))
 ;; Main!
 (defn -main [& args]
   (let [parameters (read-parameters) ]
@@ -61,7 +60,7 @@
       (if-let [turn (read-turn)] 
         (let [world (increment-world world (:turn-data turn))]
           (doseq [line (map render-move (next-move world))]
-            (dump (vec (:water world)))
+            (dump (vec (:environment world)))
             (dump line)
             (println line)
             )

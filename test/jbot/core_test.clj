@@ -45,5 +45,6 @@
 
 (fact
   "should be able to render a move"
-  (render-move {:pos [40 14] :direction "N"})
+  (render-move {:pos [40 14] :direction :n})
   => "o 40 14 N")
+

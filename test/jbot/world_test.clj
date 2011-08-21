@@ -11,7 +11,7 @@
 (fact (init-world {:rows "20" :cols "10"}) => {:player-name "0" :dimensions [20 10] :environment {} :my-ants[] })
 
 (fact "should be able to use inbound turn data to figure out state of the world"
-      (:environment (increment-world {}
+      (:environment (increment-world {:environment {[29 29] :water [20 10] :food } }
                                      [
                                       {:type :water :pos [15 50]}
                                       {:type :food :pos [1 2]}
@@ -22,6 +22,7 @@
                                       {:type :dead-ant :pos [25 14] :player "ralph"}
                                       ]))
       =>{
+               [29 29] :water 
                [15 50] :water
                [10 10] :food
                [1 2]   :food

@@ -1,21 +1,6 @@
 (ns ai
   (use debug)
   (:require world))
-;; The whole point of this exercise
-(defn get-next-passable-direction
-  [[
-   [_ N _]
-   [W _ E]
-   [_ S _]
-   ]]
-  (let
-    [
-      directions {"N" N "E" E "S" S "W" W}]
-   (first (map key 
-     (filter (fn [[k v]] (nil? v)) directions))))) ;; hackety hack
-
-;; good stuff
-
 (defn get-available-directions [world ant-pos]
   (let [
         [[_ N _]
@@ -29,6 +14,11 @@
         ]
    
     (map key (filter (comp nil? second) contents-by-direction))))
-(defn sample-bot [& whatever] "FOO")
+
+(defn ant-next-move [world pos]
+  {:pos pos :direction (first (get-available-directions world pos))})
+
+(defn sample-bot-move [{:keys [my-ants] :as world}] 
+  (filter (comp :direction identity) (map (partial ant-next-move world) my-ants)))
 ;; let's hear it for plugability
-(def next-move sample-bot)
+(def next-move sample-bot-move)

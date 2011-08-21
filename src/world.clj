@@ -1,13 +1,5 @@
 (ns world (:use debug))
 
-(defn pivot [filter-key required-values data]
-  (zipmap required-values (map
-    (fn [current-key]
-      (filter
-        (fn [current] (= current-key (get current filter-key)))
-        data))
-    required-values)))
-
 (defn init-world 
   [{:keys [rows cols] :as params}] 
   {:player-name "0" :dimensions [(Integer/parseInt rows) (Integer/parseInt cols)]  :environment{} :my-ants[]})
@@ -19,9 +11,14 @@
            (= [my-player-name :ant] [player type]))
          new-information)))
 
+(defn remove-out-of-date-info [environment]
+  (let [out-of-date-tiles (for [[k v] environment :when (not= v :water)] k)] 
+  (apply dissoc environment out-of-date-tiles)))
+
 (defn increment-world [current-state new-information]
   (let [
-        new-environment (zipmap (map :pos new-information) (map :type new-information)) 
+        previous-environment (remove-out-of-date-info (:environment current-state))
+        new-environment (merge previous-environment (zipmap (map :pos new-information) (map :type new-information)))
         player-name (:player-name current-state)
         ants (get-player-ants player-name new-information)
         ]
@@ -37,8 +34,5 @@
                    row (map (partial + curr-row) (range -1 2)) 
                    col (map (partial + curr-col) (range -1 2))]
                [(mod row grid-rows) (mod col grid-cols)])))))
-;; New stuffg
-(defn get-contents [world position]
-  ;; temp until I rejig world
-  (if (nil? (:environment world)) (throw (Exception. "TODO - make world right... well that is a tall order but YNWIM")))
-  (get (:environment world) position))
+
+(defn get-contents [world position] (get (:environment world) position))

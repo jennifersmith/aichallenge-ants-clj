@@ -36,3 +36,23 @@
     (world/get-contents :world :S) => nil
     (world/get-contents :world :W) => :water))
 
+(fact
+  "return a noop if poor ant is stuck"
+  (ant-next-move :world [10 10]) => {:pos [10 10] :direction nil}
+  (provided
+    (get-available-directions :world [10 10])=>()))
+
+(fact
+  "Returns the first available direction"
+  (ant-next-move :world [10 10]) => {:pos [10 10] :direction :E}
+  (provided
+    (get-available-directions :world [10 10])=>[:E :S]))
+
+(fact "Returns all the valid moves for my ants"
+  (sample-bot-move {:my-ants [:a :b :c]})
+      => [{:direction :N} {:direction :S}]
+  (provided
+    (ant-next-move {:my-ants [:a :b :c]} :c) => {:direction nil}
+    (ant-next-move {:my-ants [:a :b :c]} :a) => {:direction :N}
+    (ant-next-move {:my-ants [:a :b :c]} :b) => {:direction :S}))
+
