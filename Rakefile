@@ -13,7 +13,7 @@ def dump_log
 end
 task :test_bot, [:map_file] => :pack do |t, args|
 	args.with_defaults(:map_file => "tools/submission_test/test.map")
-	sh "tools/playgame.py --engine_seed 42 --player_seed 42 --food none --end_wait=0.25 --verbose --log_dir game_logs --turns 30 --map_file #{args.map_file} #{run_str}  \"python tools/submission_test/TestBot.py\" --nolaunch -e --strict --capture_errors --loadtime 10000"
+	sh "tools/playgame.py --engine_seed 142 --player_seed 42 --food none --end_wait=0.25 --verbose --log_dir game_logs --turns 30 --map_file #{args.map_file} #{run_str}  \"python tools/submission_test/TestBot.py\" --nolaunch -e --strict --capture_errors --loadtime 10000"
 	dump_log
 end
 

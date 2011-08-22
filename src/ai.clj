@@ -9,13 +9,12 @@
 (defn seed-rand-generator [seed]
   (swap! -seeded-rand-generator (constantly (make-rand-generator seed)))
   (fn [max]
-    (.nextInt @-seeded-rand-generator max)))
+    (if (> max 0)
+      (.nextInt @-seeded-rand-generator max)
+      0)))
 
 (defn sample-bot-init [world] (assoc world :rand-generator (seed-rand-generator (:rand-seed world))))
 
-(defn seeded-rand [max]
-  1
-  )
 (defn get-available-directions [world ant-pos]
   (let [
         [[_ N _]

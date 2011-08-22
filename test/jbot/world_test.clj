@@ -8,7 +8,7 @@
 (defn world-with-dimensions [rows cols]
   {:dimensions [rows cols]})
 
-(fact (init-world {:rows "20" :cols "10" :player-seed 101}) => {:rand-seed 101 :player-name "0" :dimensions [20 10] :environment {} :my-ants[] })
+(fact (init-world {:rows "20" :cols "10" :player_seed "101"}) => {:rand-seed 101 :player-name "0" :dimensions [20 10] :environment {} :my-ants[] })
 
 (fact "should be able to use inbound turn data to figure out state of the world"
       (:environment (increment-world {:environment {[29 29] :water [20 10] :food } }
