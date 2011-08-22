@@ -11,8 +11,9 @@ end
 def dump_log
 	sh "cat game_logs/0.replay |pbcopy"
 end
-task :test_bot => :pack do
-	sh "./tools/test_bot.sh #{run_str}"
+task :test_bot, [:map_file] => :pack do |t, args|
+	args.with_defaults(:map_file => "tools/submission_test/test.map")
+	sh "tools/playgame.py --engine_seed 42 --player_seed 42 --food none --end_wait=0.25 --verbose --log_dir game_logs --turns 30 --map_file #{args.map_file} #{run_str}  \"python tools/submission_test/TestBot.py\" --nolaunch -e --strict --capture_errors --loadtime 10000"
 	dump_log
 end
 
@@ -37,7 +38,7 @@ task :show_archive do
 end
 
 task :pack do
-	"rm -rdf entry" if File.exists? "entry"
+	sh "rm -rdf entry" if File.directory? "entry"
 	mkdir_p "entry"
 	sh "cp src/*.clj entry"
 	sh "cp MyBot.clj entry"

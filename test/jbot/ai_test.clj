@@ -36,6 +36,14 @@
     (world/get-contents :world :S) => nil
     (world/get-contents :world :W) => :water))
 
+(fact "only water and food is an obstruction"
+      (get-available-directions :world [60 60]) => (just [:W :S] :in-any-order)
+      (provided
+        (world/get-surrounding-coords :world [60 60]) => fake-coordinates
+        (world/get-contents :world :N) => :food
+        (world/get-contents :world :E) => :water
+        (world/get-contents :world :S) => :ant
+        (world/get-contents :world :W) => :beer))
 (fact
   "return a noop if poor ant is stuck"
   (ant-next-move :world [10 10]) => {:pos [10 10] :direction nil}

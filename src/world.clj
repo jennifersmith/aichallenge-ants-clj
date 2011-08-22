@@ -29,10 +29,10 @@
 
 (defn get-surrounding-coords [{:keys [dimensions]} [curr-row curr-col]]
   (let [[grid-rows grid-cols] dimensions]
-  (dbg (partition 3 
+  (partition 3 
              (for [
                    row (map (partial + curr-row) (range -1 2)) 
                    col (map (partial + curr-col) (range -1 2))]
-               [(mod row grid-rows) (mod col grid-cols)])))))
+               [(mod row grid-rows) (mod col grid-cols)]))))
 
 (defn get-contents [world position] (get (:environment world) position))
