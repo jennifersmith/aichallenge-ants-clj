@@ -9,7 +9,7 @@
   {:dimensions [rows cols]})
 
 (fact (init-world {:rows "20" :cols "10" :player_seed "101"}) => {:rand-seed 101 :player-name "0" :dimensions [20 10] :environment {} :my-ants[] })
-
+(fact "random can be massive!" (init-world {:player_seed "-6519445876725383498" :rows "29" :cols "400" })=> (contains [[:rand-seed -6519445876725383498]]))
 (fact "should be able to use inbound turn data to figure out state of the world"
       (:environment (increment-world {:environment {[29 29] :water [20 10] :food } }
                                      [
