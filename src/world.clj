@@ -1,8 +1,8 @@
 (ns world (:use debug))
 
 (defn init-world 
-  [{:keys [rows cols] :as params}] 
-  {:player-name "0" :dimensions [(Integer/parseInt rows) (Integer/parseInt cols)]  :environment{} :my-ants[]})
+  [{:keys [rows cols player-seed] :as params}] 
+  {:player-name "0" :rand-seed player-seed  :dimensions [(Integer/parseInt rows) (Integer/parseInt cols)]  :environment{} :my-ants[]})
 
 (defn get-player-ants [my-player-name new-information]
   (map :pos

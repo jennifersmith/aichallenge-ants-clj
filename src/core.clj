@@ -52,11 +52,11 @@
     " "
     (.toUpperCase (name direction))))
 ;; Main!
+;; evil game loop
 (defn -main [& args]
   (let [parameters (read-parameters) ]
-    (dump parameters)
     (do (println "go") (.flush System/out)) 
-    (loop [world (init-world parameters)]
+    (loop [world (init (init-world parameters))] ;; INIT is ai init and init-world is core I think. Dodgy!
       (if-let [turn (read-turn)] 
         (let [world (increment-world world (:turn-data turn))]
           (doseq [line (map render-move (next-move world))]

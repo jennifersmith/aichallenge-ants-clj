@@ -46,21 +46,26 @@
         (world/get-contents :world :W) => :beer))
 (fact
   "return a noop if poor ant is stuck"
-  (ant-next-move :world [10 10]) => {:pos [10 10] :direction nil}
+  (ant-next-move :world (fn [max] 1) [10 10]) => {:pos [10 10] :direction nil}
   (provided
     (get-available-directions :world [10 10])=>()))
 
 (fact
-  "Returns the first available direction"
-  (ant-next-move :world [10 10]) => {:pos [10 10] :direction :E}
+  "Returns a random available direction using given random generator"
+  (ant-next-move :world (fn [max] 1) [10 10]) => {:pos [10 10] :direction :S  }
   (provided
     (get-available-directions :world [10 10])=>[:E :S]))
 
 (fact "Returns all the valid moves for my ants"
-  (sample-bot-move {:my-ants [:a :b :c]})
+  (sample-bot-move {:my-ants [:a :b :c] :rand-generator :rand})
       => [{:direction :N} {:direction :S}]
   (provided
-    (ant-next-move {:my-ants [:a :b :c]} :c) => {:direction nil}
-    (ant-next-move {:my-ants [:a :b :c]} :a) => {:direction :N}
-    (ant-next-move {:my-ants [:a :b :c]} :b) => {:direction :S}))
+    (ant-next-move {:my-ants [:a :b :c] :rand-generator :rand } :rand :c) => {:direction nil}
+    (ant-next-move {:my-ants [:a :b :c] :rand-generator :rand} :rand :a) => {:direction :N}
+    (ant-next-move {:my-ants [:a :b :c] :rand-generator :rand } :rand :b) => {:direction :S}))
 
+(fact
+  "init seeds the random generator"
+  (sample-bot-init {:rand-seed 200}) => {:rand-seed 200 :rand-generator :seeded-rand-generator }
+  (provided
+    (seed-rand-generator 200) => :seeded-rand-generator))
