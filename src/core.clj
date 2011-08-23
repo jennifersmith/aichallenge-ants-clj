@@ -1,30 +1,9 @@
-(ns core (:use debug  world ai) (:import (java.io BufferedReader)))
-
-;; string utils
-(defn tokenize [line] (seq (.split #"\s" line)))
-(defn parse-int [value] (Integer/parseInt value)) ;; I dont think can use a java function as a clojure fn right in map and stuff like that?
-
-;; Protocol parsing stuff (not as in clojure protocols...) - this stuff takes tokenized strings and gets the goodies out
-;; Should I maybe assert "turn" as in "turn 2" and "end" as in the end of the game?
-
-(def code->event-type 
-  {"a" :ant
-   "d" :dead-ant
-   "f" :food
-   "w" :water})
-
-(defn read-turn-header
-  ([turn-message turn-number] (Integer/parseInt turn-number))
-  ([end-message] nil)
-  ([too many & args] (throw (Exception. (apply str (flatten (cons [too many] args)))))))
-
-
-(defn parse-turn-input 
-  ([event-type x y player] (assoc (parse-turn-input event-type x y) :player player))
-  ([event-type x y] {:type (code->event-type event-type) :pos (vec (map parse-int  [x y]))}))
-
+(ns core (:use debug parsing world ai))
 ;; in stream reading stuff
 ;; for ever and ever and ever
+
+(defn tokenize [line] (seq (.split #"\s" line)))
+
 (defn read-input []
   (map tokenize (repeatedly read-line)))
 (defn read-one [] (first (read-input)))

@@ -1,0 +1,88 @@
+PRIORITIES
+
+- tidy core.clj (see below)
+- rename world -> game state
+- split gamestate into
+gamestate
+   environment
+      dimensions
+      tiles
+   player-ants
+      player-name
+   random-generator
+
+- clear up remaining into def records 
+- parsing parameters should know their type not just read in whole lot
+- implemenet changes to get-available-directions
+- merge init-world and init
+- pull down update of environment / player-ants into protocol or multimethod
+- change the ai stuff to just move-ant as below 
+- extend logic of move ant so does different things when there are 0, 1, 2 methods via multimethod?
+- Memoization of ant-state?? 
+
+World usages
+world
+1) sample-bot-init : reads "player_seed" sets rand-generator
+2) get-available-directions PASS THRU to get-contents and get-surrounding-coords
+3) ant-next-move PASS THRU to get-available-directions
+4) sample-bot-move PASS THRU world to ant-next-move and uses my-ants and rand-generator
+5) Game loop:
+    Init world from parameters and the sample bot init
+    Passed to next-move too
+6) Created in init-world (world)
+7) incrememnt-world : sets environment/ants and accesses playername
+
+Fixes
+
+core.clj
+
+Need all these?
+
+remove BufferedReader dep
+remove logging (if safe)
+tidy up game loop 
+MERGE init and init-bot into "init" in new gamestate module
+Parsing and reading -> io.clj
+
+Observations
+
+get-available-directions is position/world logic not ai - move to world?
+
+deciding where to go based on current environment (KV pairs of points and items) and current ant state(could be record of ant pos, available dirs) 
+is really the ai at work so how bout
+
+(defn move-ant [environment {:keys [pos available-directions]} "impl")
+
+which is just a deciding function to return an ant-move 
+
+Incrememnt-world is doing two things 1)updating environment 2) updating player-ants based on player name. Better to move update-environment and find-player-ants:
+
+(defn increment-game-state [current-game-state {new-information]
+	(assoc
+		current-game-state
+		(update-environment (new-information :environment))
+		(locate-player-ants (new-information :player-ants))))
+
+maybe without new-information as map
+
+PERHAPS player-ants is aware of its own name and is a map {:player-name "bob" :ants []}
+Solves problem about 'who knows about the player name'
+
+Could use protocol/multimethod so
+
+(defn update-state [current-state new-information]
+   where current-state is the item and new-information is the array
+	for world:
+  (merge-with update-state current-state (zipmap (keys current-state) (repeat new-information))))
+
+Hmm a bit crazy
+
+world ~> environment?
+
+Concepts:
+
+ant-state
+environment (nee world)
+tiles (nee environment in world)
+ant-move
+game state (everything from world apart from dimensions and tiles)
