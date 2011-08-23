@@ -57,6 +57,8 @@
 
 ;; Now these dont belong here - move out all environment stuff into its own file?
 (defn get-surrounding-coords [{:keys [dimensions]} [curr-row curr-col]]
+  (dump dimensions "dim")
+  (dump curr-row curr-col " row coll")
   (let [[grid-rows grid-cols] dimensions]
   (partition 3 
              (for [
@@ -66,16 +68,16 @@
 
 (defn get-contents [{:keys [tiles]} position] (get tiles  position))
 
-(defn get-available-directions [game-state ant-pos]
+(defn get-available-directions [environment ant-pos]
   (let [
         [[_ N _]
          [W _ E]
          [_ S _]]
-        (game-state/get-surrounding-coords  game-state ant-pos)
+        (get-surrounding-coords  environment ant-pos)
         directions 
           {:N N :E E :S S :W W}
         contents-by-direction
-          (zipmap [:N :E :S :W] (map (partial game-state/get-contents game-state) [N E S W]))
+          (zipmap [:N :E :S :W] (map (partial get-contents environment) [N E S W]))
         ]
    
     (map key (filter #(nil? (#{:water :food} (val %))) contents-by-direction))))
