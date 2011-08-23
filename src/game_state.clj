@@ -18,20 +18,29 @@
            (= [my-player-name :ant] [player type]))
          new-information)))
 
+
 (defn remove-out-of-date-info [environment]
   (let [out-of-date-tiles (for [[k v] environment :when (not= v :water)] k)] 
   (apply dissoc environment out-of-date-tiles)))
 
-(defn increment-game-state [current-state new-information]
+(defn increment-environment [{:keys [tiles] :as current-environment}  new-information]
+  (let [previous-environment (remove-out-of-date-info tiles)]
+    (assoc current-environment 
+           :tiles (merge previous-environment (zipmap (map :pos new-information) (map :type new-information))))))
+    
+(defn increment-my-ants [current-ants new-information]
   (let [
-        previous-environment (remove-out-of-date-info (:environment current-state))
-        new-environment (merge previous-environment (zipmap (map :pos new-information) (map :type new-information)))
-        player-name (:player-name current-state)
+        player-name (:player-name current-ants)
         ants (get-player-ants player-name new-information)
         ]
-    (-> current-state
-      (assoc :environment new-environment)
-      (assoc :my-ants ants))))
+      (assoc current-ants :ants ants)))
+
+
+(defn increment-game-state [current-game-state new-info] 
+  (assoc
+    current-game-state
+    :environment (increment-environment (:environment current-game-state) new-info)
+    :my-ants (increment-my-ants (:my-ants current-game-state) new-info)))
 
 
 (defn get-surrounding-coords [{:keys [dimensions]} [curr-row curr-col]]
@@ -42,4 +51,4 @@
                    col (map (partial + curr-col) (range -1 2))]
                [(mod row grid-rows) (mod col grid-cols)]))))
 
-(defn get-contents [game-state position] (get (:environment game-state) position))
+(defn get-contents [{:keys [tiles]} position] (get tiles  position))

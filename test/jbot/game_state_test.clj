@@ -28,33 +28,43 @@
         (init-random-generator -6519445876725383498)=> :foo))
 
 (fact "should be able to use inbound turn data to figure out state of the game-state"
-      (:environment (increment-game-state {:environment {[29 29] :water [20 10] :food } }
-                                     [
-                                      {:type :water :pos [15 50]}
-                                      {:type :food :pos [1 2]}
-                                      {:type :food :pos [10 10]}
-                                      {:type :ant :pos [15 16] :player "ralph"}
-                                      {:type :ant :pos [5 2] :player "bob"}
-                                      {:type :dead-ant :pos [2 1] :player "bob"}
-                                      {:type :dead-ant :pos [25 14] :player "ralph"}
-                                      ]))
-      =>{
-               [29 29] :water 
-               [15 50] :water
-               [10 10] :food
-               [1 2]   :food
-               [15 16] :ant
-               [5 2]   :ant
-               [2 1] :dead-ant
-               [25 14] :dead-ant})
+      (:tiles (increment-environment 
+        {:tiles {[29 29] :water [20 10] :food }}
+        [
+         {:type :water :pos [15 50]}
+         {:type :food :pos [1 2]}
+         {:type :food :pos [10 10]}
+         {:type :ant :pos [15 16] :player "ralph"}
+         {:type :ant :pos [5 2] :player "bob"}
+         {:type :dead-ant :pos [2 1] :player "bob"}
+         {:type :dead-ant :pos [25 14] :player "ralph"}
+         ]))
+      => {
+                           [29 29] :water 
+                           [15 50] :water
+                           [10 10] :food
+                           [1 2]   :food
+                           [15 16] :ant
+                           [5 2]   :ant
+                           [2 1] :dead-ant
+                           [25 14] :dead-ant})
 
 (fact "figures out which ants are mine"
-      (:my-ants (increment-game-state {:player-name "bob"} [{:type :ant :pos [20 20] :player "bob"} {:type :ant :pos [14 15] :player "Henry"} {:type :ant :pos [14 20] :player "bob"}]))
-      => (just [14 20] [20 20] :in-any-order))
+      (:ants (increment-my-ants {:player-name "bob" :ants :replace-me}  [ 
+                                                                  {:type :ant :pos [20 20] :player "bob"} 
+                                                                  {:type :ant :pos [14 15] :player "Henry"} 
+                                                                  {:type :ant :pos [14 20] :player "bob"}]))
+      => (just [[14 20] [20 20]] :in-any-order))
 
-(fact "holds onto other bits"
-      (increment-game-state {:foo :bar :baz 2} []) =>
-        (contains  {:foo :bar :baz 2}))
+(fact
+      (increment-game-state {:environment :old-env :my-ants :old-ants} :new-data) =>
+        {
+          :environment :updated-env
+          :my-ants :updated-ants
+         }
+  (provided
+    (increment-environment :old-env :new-data)=> :updated-env
+    (increment-my-ants :old-ants :new-data) => :updated-ants))
 
 (fact (get-surrounding-coords (environment-with-dimensions 100 100) [30 16]) =>
       [
@@ -75,8 +85,8 @@
      [[0  48] [0  49] [0 0]]])
 
 (fact "returns what is in the square" 
-    (get-contents {:environment {[10 20] :water}} [5 5]) => nil
-    (get-contents {:environment {[10 20] :water}} [10 20]) => :water)
+    (get-contents {:tiles {[10 20] :water}} [5 5]) => nil
+    (get-contents {:tiles {[10 20] :water}} [10 20]) => :water)
 
 
 
