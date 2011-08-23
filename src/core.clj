@@ -1,15 +1,14 @@
 (ns core (:use debug parsing world ai))
 ;; in stream reading stuff
-;; for ever and ever and ever
-
 (defn tokenize [line] (seq (.split #"\s" line)))
-
 (defn read-input []
   (map tokenize (repeatedly read-line)))
+
 (defn read-one [] (first (read-input)))
 
-(defn read-upto [stop-token]
-  (doall (take-while #(not (some #{stop-token} %)) (read-input))))
+(defn read-upto [& stop-tokens]
+  (doall (take-while #(empty? (clojure.set/intersection (set stop-tokens) (set %))) (read-input))))
+
 ;; combining parsing and reading stream stuff
 (defn read-parameters []
   (let [lines (read-upto "ready")]
@@ -19,6 +18,9 @@
             lines)))
 
 (defn read-turn []
+  (parse-turn (read-upto "go" "end")))
+
+  (defn foo []
   (if-let [turn-header (apply read-turn-header (read-one))]
     {:turn-number turn-header
      :turn-data (seq (map (partial apply parse-turn-input) (read-upto "go")))}))

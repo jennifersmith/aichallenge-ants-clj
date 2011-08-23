@@ -12,11 +12,17 @@
 (defn read-turn-header
   ([turn-message turn-number] (Integer/parseInt turn-number))
   ([end-message] nil)
-  ([too many & args] (throw (Exception. (apply str (flatten (cons [too many] args)))))))
+  ([too many & args] (throw (Exception. (apply str (flatten (cons ["invalid call to turn header" too many] args)))))))
 
 
 (defn parse-turn-input 
   ([event-type x y player] (assoc (parse-turn-input event-type x y) :player player))
   ([event-type x y] {:type (code->event-type event-type) :pos (vec (map parse-int  [x y]))}))
 
+(defn parse-turn [[turn-header-line & remaining-lines]]
+  (if-let [turn-header (apply read-turn-header turn-header-line)]
+    (let [turn-data-lines (butlast remaining-lines)]
+      {
+       :turn-number turn-header
+        :turn-data (seq (map (partial apply parse-turn-input) turn-data-lines))})))
 

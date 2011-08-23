@@ -19,4 +19,14 @@
   (parse-turn-input "a" "15" "15" "bob") => (contains {:player "bob"})
   (parse-turn-input "d" "15" "15" "gary") => (contains {:player "gary"}))
 
+(fact 
+  (parse-turn [["turn" "1"] ["data1"] ["data2"] ["go"]]) => {:turn-number 1 :turn-data [:one :two]}
+  (provided
+    (parse-turn-input "data1") => :one
+    (parse-turn-input "data2") => :two))
+
+(fact 
+  "end should be signified by a nil turn"
+  (parse-turn [["end"]])=> nil)
+
 
