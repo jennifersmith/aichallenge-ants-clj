@@ -1,6 +1,6 @@
-(ns world (:use debug))
+(ns game-state (:use debug))
 
-(defn init-world 
+(defn init-game-state 
   [{:keys [rows cols player_seed] :as params}] 
   {:player-name "0" :rand-seed (Long/parseLong player_seed)  :dimensions [(Integer/parseInt rows) (Integer/parseInt cols)]  :environment{} :my-ants[]})
 
@@ -15,7 +15,7 @@
   (let [out-of-date-tiles (for [[k v] environment :when (not= v :water)] k)] 
   (apply dissoc environment out-of-date-tiles)))
 
-(defn increment-world [current-state new-information]
+(defn increment-game-state [current-state new-information]
   (let [
         previous-environment (remove-out-of-date-info (:environment current-state))
         new-environment (merge previous-environment (zipmap (map :pos new-information) (map :type new-information)))
@@ -35,4 +35,4 @@
                    col (map (partial + curr-col) (range -1 2))]
                [(mod row grid-rows) (mod col grid-cols)]))))
 
-(defn get-contents [world position] (get (:environment world) position))
+(defn get-contents [game-state position] (get (:environment game-state) position))

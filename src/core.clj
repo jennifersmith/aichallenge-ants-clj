@@ -1,4 +1,4 @@
-(ns core (:use debug parsing world ai))
+(ns core (:use debug parsing game-state ai))
 ;; in stream reading stuff
 (defn tokenize [line] (seq (.split #"\s" line)))
 (defn read-input []
@@ -20,11 +20,7 @@
 (defn read-turn []
   (parse-turn (read-upto "go" "end")))
 
-  (defn foo []
-  (if-let [turn-header (apply read-turn-header (read-one))]
-    {:turn-number turn-header
-     :turn-data (seq (map (partial apply parse-turn-input) (read-upto "go")))}))
-;; and finally... render!
+  ;; and finally... render!
 
 (defn render-move [{:keys [pos direction]}]
   (str 
@@ -37,17 +33,17 @@
 (defn -main [& args]
   (let [parameters (read-parameters) ]
     (do (println "go") (.flush System/out)) 
-    (loop [world (init (init-world parameters))] ;; INIT is ai init and init-world is core I think. Dodgy!
+    (loop [game-state (init (init-game-state parameters))] ;; INIT is ai init and init-game-state is core I think. Dodgy!
       (if-let [turn (read-turn)] 
-        (let [world (increment-world world (:turn-data turn))]
-          (doseq [line (map render-move (next-move world))]
-            (dump (vec (:environment world)))
+        (let [game-state (increment-game-state game-state (:turn-data turn))]
+          (doseq [line (map render-move (next-move game-state))]
+            (dump (vec (:environment game-state)))
             (dump line)
             (println line)
             )
           (println "go")
           (.flush System/out)
-          (recur world))
+          (recur game-state))
         (do
           (read-line)
           (read-line))))))
