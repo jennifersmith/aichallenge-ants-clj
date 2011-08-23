@@ -1,7 +1,5 @@
 PRIORITIES
 
-- tidy core.clj (see below)
-- rename world -> game state
 - split gamestate into
 gamestate
    environment

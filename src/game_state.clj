@@ -1,8 +1,15 @@
 (ns game-state (:use debug))
 
+(defn init-environment [rows cols] {:dimensions [rows cols] :tiles{}})
+(defn init-my-ants [player] {:player-name player :ants[]})
+(defn init-random-generator [seed] :fibble)
+
 (defn init-game-state 
   [{:keys [rows cols player_seed] :as params}] 
-  {:player-name "0" :rand-seed (Long/parseLong player_seed)  :dimensions [(Integer/parseInt rows) (Integer/parseInt cols)]  :environment{} :my-ants[]})
+  {
+   :my-ants (init-my-ants "0")
+   :random-generator (init-random-generator (Long/parseLong player_seed))
+   :environment (init-environment (Integer/parseInt rows) (Integer/parseInt cols))})
 
 (defn get-player-ants [my-player-name new-information]
   (map :pos
