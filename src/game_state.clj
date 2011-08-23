@@ -1,8 +1,21 @@
-(ns game-state (:use debug))
+(ns game-state 
+  (:use debug)
+  (:import java.util.Random))
+
+(def -seeded-rand-generator (atom nil))
+(defn make-rand-generator [seed]
+  (Random. seed))
+(defn seed-random-generator [seed]
+  (swap! -seeded-rand-generator (constantly (make-rand-generator seed)))
+  (fn [max]
+    (if (> max 0)
+      (.nextInt @-seeded-rand-generator max)
+      0)))
+
 
 (defn init-environment [rows cols] {:dimensions [rows cols] :tiles{}})
 (defn init-my-ants [player] {:player-name player :ants[]})
-(defn init-random-generator [seed] :fibble)
+(defn init-random-generator [seed] (seed-random-generator seed))
 
 (defn init-game-state 
   [{:keys [rows cols player_seed] :as params}] 
@@ -42,7 +55,7 @@
     :environment (increment-environment (:environment current-game-state) new-info)
     :my-ants (increment-my-ants (:my-ants current-game-state) new-info)))
 
-
+;; Now these dont belong here - move out all environment stuff into its own file?
 (defn get-surrounding-coords [{:keys [dimensions]} [curr-row curr-col]]
   (let [[grid-rows grid-cols] dimensions]
   (partition 3 
@@ -52,3 +65,19 @@
                [(mod row grid-rows) (mod col grid-cols)]))))
 
 (defn get-contents [{:keys [tiles]} position] (get tiles  position))
+
+(defn get-available-directions [game-state ant-pos]
+  (let [
+        [[_ N _]
+         [W _ E]
+         [_ S _]]
+        (game-state/get-surrounding-coords  game-state ant-pos)
+        directions 
+          {:N N :E E :S S :W W}
+        contents-by-direction
+          (zipmap [:N :E :S :W] (map (partial game-state/get-contents game-state) [N E S W]))
+        ]
+   
+    (map key (filter #(nil? (#{:water :food} (val %))) contents-by-direction))))
+
+

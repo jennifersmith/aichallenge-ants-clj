@@ -33,7 +33,7 @@
 (defn -main [& args]
   (let [parameters (read-parameters) ]
     (do (println "go") (.flush System/out)) 
-    (loop [game-state (init (init-game-state parameters))] ;; INIT is ai init and init-game-state is core I think. Dodgy!
+    (loop [game-state (init-game-state parameters)] ;; INIT is ai init and init-game-state is core I think. Dodgy!
       (if-let [turn (read-turn)] 
         (let [game-state (increment-game-state game-state (:turn-data turn))]
           (doseq [line (map render-move (next-move game-state))]

@@ -66,6 +66,10 @@
     (increment-environment :old-env :new-data)=> :updated-env
     (increment-my-ants :old-ants :new-data) => :updated-ants))
 
+(def fake-coordinates (partition 3
+                                 [:NW :N :NE :W :SELF :E :SW :S :SE]))
+
+
 (fact (get-surrounding-coords (environment-with-dimensions 100 100) [30 16]) =>
       [
         [[29 15] [29 16] [29 17]]
@@ -88,5 +92,38 @@
     (get-contents {:tiles {[10 20] :water}} [5 5]) => nil
     (get-contents {:tiles {[10 20] :water}} [10 20]) => :water)
 
+(fact
+  "when there is water everywhere, returns empty. Nowhere to run for this wee ant"
+  (get-available-directions  :env [10 10])
+    => ()
+  (provided
+    (game-state/get-surrounding-coords :env [10 10]) => fake-coordinates
+    (game-state/get-contents :env anything)=> :water))
+
+(fact 
+  "when there are no obstructions, you can go anywhere"
+  (get-available-directions :env [15 15]) => (just [:N :E :S :W] :in-any-order)
+  (provided
+    (game-state/get-surrounding-coords  :env [15 15]) => fake-coordinates
+    (game-state/get-contents :env anything) => nil))
+
+(fact 
+  "only returns directions without obstructions"
+  (get-available-directions :env [60 60]) => (just [:E :S] :in-any-order)
+  (provided
+    (game-state/get-surrounding-coords :env [60 60]) => fake-coordinates
+    (game-state/get-contents :env :N) => :water
+    (game-state/get-contents :env :E) => nil
+    (game-state/get-contents :env :S) => nil
+    (game-state/get-contents :env :W) => :water))
+
+(fact "only water and food is an obstruction"
+      (get-available-directions :env [60 60]) => (just [:W :S] :in-any-order)
+      (provided
+        (game-state/get-surrounding-coords :env [60 60]) => fake-coordinates
+        (game-state/get-contents :env :N) => :food
+        (game-state/get-contents :env :E) => :water
+        (game-state/get-contents :env :S) => :ant
+        (game-state/get-contents :env :W) => :beer))
 
 
