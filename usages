@@ -1,14 +1,5 @@
 PRIORITIES
 
-- split gamestate into
-gamestate
-   environment
-      dimensions
-      tiles
-   player-ants
-      player-name
-   random-generator
-
 - clear up remaining into def records 
 - parsing parameters should know their type not just read in whole lot
 - implemenet changes to get-available-directions
@@ -17,7 +8,7 @@ gamestate
 - change the ai stuff to just move-ant as below 
 - extend logic of move ant so does different things when there are 0, 1, 2 methods via multimethod?
 - Memoization of ant-state?? 
-
+- atom really needed for rand? 
 World usages
 world
 1) sample-bot-init : reads "player_seed" sets rand-generator

@@ -1,7 +1,7 @@
 (ns jbot.ai_test
   (:use 
         ai
-        game-state
+        environment
         clojure.test
         midje.sweet))
 
@@ -24,7 +24,7 @@
     (get-available-directions :environment [10 10])=>[:E :S]))
 
 (fact "Returns all the valid moves for my ants"
-  (sample-bot-move {:my-ants [:a :b :c] :environment :env  :random-generator :rand})
+  (sample-bot-move {:my-ants {:ants [:a :b :c]} :environment :env  :random-generator :rand})
       => [{:direction :N} {:direction :S}]
   (provided
     (ant-next-move :env :rand :c)  => {:direction nil}
