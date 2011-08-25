@@ -3,6 +3,7 @@
         core
         game-state
         environment
+        structure
         clojure.test
         midje.sweet))
 

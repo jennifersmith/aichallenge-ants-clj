@@ -1,14 +1,11 @@
 (ns environment
-  (:use debug))
+  (:use debug structure))
 
 
 (defn remove-out-of-date-info [environment]
   (let [out-of-date-tiles (for [[k v] environment :when (not= v :water)] k)] 
     (apply dissoc environment out-of-date-tiles)))
 
-(defprotocol IncrementableState
-  "Stuff that changes turn by turn"
-  (increment-state [current-state new-information]))
 (defprotocol NavigablePlane
   (get-surrounding-coords [this point])
   (get-contents [this position])

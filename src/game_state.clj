@@ -1,5 +1,5 @@
 (ns game-state 
-  (:use environment debug)
+  (:use environment debug structure)
   (:import java.util.Random))
 
 (def -seeded-rand-generator (atom nil))
