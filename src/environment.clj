@@ -2,40 +2,49 @@
   (:use debug))
 
 
-(defn init-environment [rows cols] {:dimensions [rows cols] :tiles{}})
-
 (defn remove-out-of-date-info [environment]
   (let [out-of-date-tiles (for [[k v] environment :when (not= v :water)] k)] 
-  (apply dissoc environment out-of-date-tiles)))
+    (apply dissoc environment out-of-date-tiles)))
 
-(defn increment-environment [{:keys [tiles] :as current-environment}  new-information]
-  (let [previous-environment (remove-out-of-date-info tiles)]
-    (assoc current-environment 
-           :tiles (merge previous-environment (zipmap (map :pos new-information) (map :type new-information))))))
+(defprotocol IncrementableState
+  "Stuff that changes turn by turn"
+  (increment-state [current-state new-information]))
+(defprotocol NavigablePlane
+  (get-surrounding-coords [this point])
+  (get-contents [this position])
+  (get-available-directions [this [row col]]))
 
-(defn get-surrounding-coords [{:keys [dimensions]} [curr-row curr-col]]
-  (dump dimensions "dim")
-  (dump curr-row curr-col " row coll")
-  (let [[grid-rows grid-cols] dimensions]
-  (partition 3 
-             (for [
-                   row (map (partial + curr-row) (range -1 2)) 
-                   col (map (partial + curr-col) (range -1 2))]
-               [(mod row grid-rows) (mod col grid-cols)]))))
+(defrecord Environment [dimensions tiles]       
+  IncrementableState
+  (increment-state [this  new-information]
+                   (let [previous-environment (remove-out-of-date-info tiles)]
+                     (assoc this 
+                            :tiles (merge previous-environment (zipmap (map :pos new-information) (map :type new-information))))))
+  NavigablePlane
+  (get-surrounding-coords [this [curr-row curr-col]]
+                               (let [[grid-rows grid-cols] dimensions]
+                                 (partition 3 
+                                            (for [
+                                                  row (map (partial + curr-row) (range -1 2)) 
+                                                  col (map (partial + curr-col) (range -1 2))]
+                                              [(mod row grid-rows) (mod col grid-cols)]))))
+  (get-contents [this position] (get tiles  position))
+  (get-available-directions [this position]
+                            (let [
+                                  [[_ N _]
+                                   [W _ E]
+                                   [_ S _]]
+                                  (get-surrounding-coords  this  position)
+                                  directions 
+                                  {:N N :E E :S S :W W}
+                                  contents-by-direction
+                                  (zipmap [:N :E :S :W] (map (partial get-contents this) [N E S W]))
+                                  ]
 
-(defn get-contents [{:keys [tiles]} position] (get tiles  position))
+                              (map key (filter #(nil? (#{:water :food} (val %))) contents-by-direction))))
 
-(defn get-available-directions [environment ant-pos]
-  (let [
-        [[_ N _]
-         [W _ E]
-         [_ S _]]
-        (get-surrounding-coords  environment ant-pos)
-        directions 
-          {:N N :E E :S S :W W}
-        contents-by-direction
-          (zipmap [:N :E :S :W] (map (partial get-contents environment) [N E S W]))
-        ]
-   
-    (map key (filter #(nil? (#{:water :food} (val %))) contents-by-direction))))
 
+
+  )
+
+(defn init-environment [rows cols] (Environment. [rows cols] {}))

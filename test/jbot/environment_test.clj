@@ -10,7 +10,7 @@
 
 ;; contains with nestd array doesnt appear to work ? should probably write a test case for that...
 (fact "should be able to use inbound turn data to figure out state of the game-state"
-      (:tiles (increment-environment 
+      (:tiles (increment-state
         {:tiles {[29 29] :water [20 10] :food }}
         [
          {:type :water :pos [15 50]}

@@ -41,7 +41,7 @@
           :my-ants :updated-ants
          }
   (provided
-    (increment-environment :old-env :new-data)=> :updated-env
+    (increment-state :old-env :new-data)=> :updated-env
     (increment-my-ants :old-ants :new-data) => :updated-ants))
 
 

@@ -43,7 +43,7 @@
 (defn increment-game-state [current-game-state new-info] 
   (assoc
     current-game-state
-    :environment (increment-environment (:environment current-game-state) new-info)
+    :environment (increment-state (:environment current-game-state) new-info)
     :my-ants (increment-my-ants (:my-ants current-game-state) new-info)))
 
 
