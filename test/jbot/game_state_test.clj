@@ -10,6 +10,11 @@
 (defn environment-with-dimensions [rows cols]
   {:dimensions [rows cols]})
 
+(defn make-game-state [ants env]
+  (-> (init-game-state {:rows "20" :cols "10" :player_seed "101"})
+    (assoc :my-ants ants)
+    (assoc :environment env)))
+
 (fact (init-environment 20 10) => {:dimensions [20 10] :tiles {}})
 (fact (init-my-ants "bob") => {:player-name "bob" :ants []})
 
@@ -36,11 +41,11 @@
       => (just [[14 20] [20 20]] :in-any-order))
 
 (fact
-      (increment-game-state {:environment :old-env :my-ants :old-ants} :new-data) =>
-        {
-          :environment :updated-env
-          :my-ants :updated-ants
-         }
+      (increment-state (make-game-state :old-ants :old-env) :new-data) =>
+       (contains 
+          [:environment :updated-env]
+          [:my-ants :updated-ants]
+         )
   (provided
     (increment-state :old-env :new-data)=> :updated-env
     (increment-my-ants :old-ants :new-data) => :updated-ants))

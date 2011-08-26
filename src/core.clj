@@ -1,4 +1,4 @@
-(ns core (:use debug parsing game-state ai))
+(ns core (:use debug parsing game-state ai structure))
 ;; in stream reading stuff
 (defn tokenize [line] (seq (.split #"\s" line)))
 (defn read-input []
@@ -35,7 +35,7 @@
     (do (println "go") (.flush System/out)) 
     (loop [game-state (init-game-state parameters)] ;; INIT is ai init and init-game-state is core I think. Dodgy!
       (if-let [turn (read-turn)] 
-        (let [game-state (increment-game-state game-state (:turn-data turn))]
+        (let [game-state (increment-state game-state (:turn-data turn))]
           (doseq [line (map render-move (next-move game-state))]
             (dump (vec (:environment game-state)))
             (dump line)
