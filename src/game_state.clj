@@ -2,7 +2,6 @@
   (:use environment debug structure)
   (:import java.util.Random))
 
-(defrecord FooBar [a b])
 
 (defn get-player-ants [my-player-name new-information]
   (map :pos
@@ -13,12 +12,14 @@
 
 
 
-(defn increment-my-ants [current-ants new-information]
-  (let [
-        player-name (:player-name current-ants)
-        ants (get-player-ants player-name new-information)
-        ]
-    (assoc current-ants :ants ants)))
+
+(defrecord PlayerAnts [player-name ants]
+  IncrementableState
+  (increment-state [this new-information]
+                   (let [
+                         new-ants (get-player-ants player-name new-information)
+                         ]
+                     (assoc this :ants new-ants))))
 
 
 (defrecord GameState [my-ants random-generator environment]
@@ -27,7 +28,7 @@
                    (assoc
                      this
                      :environment (increment-state environment new-info)
-                     :my-ants (increment-my-ants my-ants new-info))))
+                     :my-ants (increment-state my-ants new-info))))
 
 (def -seeded-rand-generator (atom nil))
 (defn make-rand-generator [seed]
@@ -40,7 +41,7 @@
       0)))
 
 
-(defn init-my-ants [player] {:player-name player :ants[]})
+(defn init-my-ants [player] (PlayerAnts. player []))
 (defn init-random-generator [seed] (seed-random-generator seed))
 
 (defn init-game-state 

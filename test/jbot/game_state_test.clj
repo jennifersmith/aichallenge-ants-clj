@@ -34,7 +34,7 @@
       (provided 
         (init-random-generator -6519445876725383498)=> :foo))
 (fact "figures out which ants are mine"
-      (:ants (increment-my-ants {:player-name "bob" :ants :replace-me}  [ 
+      (:ants (increment-state (init-my-ants "bob")  [ 
                                                                   {:type :ant :pos [20 20] :player "bob"} 
                                                                   {:type :ant :pos [14 15] :player "Henry"} 
                                                                   {:type :ant :pos [14 20] :player "bob"}]))
@@ -48,6 +48,6 @@
          )
   (provided
     (increment-state :old-env :new-data)=> :updated-env
-    (increment-my-ants :old-ants :new-data) => :updated-ants))
+    (increment-state :old-ants :new-data) => :updated-ants))
 
 
