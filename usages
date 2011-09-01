@@ -1,6 +1,5 @@
 PRIORITIES
 
-- parsing parameters should know their type not just read in whole lot
 - implemenet changes to get-available-directions
 - merge init-world and init
 - pull down update of environment / player-ants into protocol or multimethod

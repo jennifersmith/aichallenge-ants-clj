@@ -11,23 +11,23 @@
 
 
 (fact
-  "return a noop if poor ant is stuck"
-  (ant-next-move :environment random-generator [10 10]) => {:pos [10 10] :direction nil}
-  (provided
-    (get-available-directions :environment [10 10])=>()))
+  "return a nil if poor ant is stuck"
+  (ant-next-move random-generator {:pos [10 10] :directions []}) => nil)
 
 (fact
   "Returns a random available direction using given random generator"
-  (ant-next-move :environment random-generator [10 10]) => {:pos [10 10] :direction :S  }
+  (ant-next-move rand {:pos [10 10] :directions [:E :S]}) => {:pos [10 10] :direction :S}
   (provided
-    (rand 2) => 1
-    (get-available-directions :environment [10 10])=>[:E :S]))
+    (rand 2) => 1))
 
-(fact "Returns all the valid moves for my ants"
-  (sample-bot-move {:my-ants {:ants [:a :b :c]} :environment :env  :random-generator :rand})
-      => [{:direction :N} {:direction :S}]
-  (provided
-    (ant-next-move :env :rand :c)  => {:direction nil}
-    (ant-next-move :env :rand :a)  => {:direction :N}
-    (ant-next-move :env :rand :b) => {:direction :S}))
 
+(fact "Passes ant pos and available directions to compute next move"
+      (move-ants {:my-ants {:ants [:a :b :c]} :environment :env :random-generator :rand}) =>
+        [:ant-move-one :ant-move-two]
+      (provided
+        (get-available-directions :env :a) => :a-directions
+        (get-available-directions :env :b) => :b-directions
+        (get-available-directions :env :c) => :c-directions
+        (ant-next-move :rand {:pos :a :directions :a-directions}) => :ant-move-one
+        (ant-next-move :rand {:pos :b :directions :b-directions}) => :ant-move-two
+        (ant-next-move :rand {:pos :c :directions :c-directions}) => nil))

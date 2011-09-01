@@ -1,12 +1,21 @@
 (ns ai
   (:use environment debug))
 
-(defn ant-next-move [environment random-generator pos]
-  (let [directions  (get-available-directions environment pos)]
-  {:pos pos :direction (nth (vec directions) (random-generator (count directions)) nil)}))
+(defn ant-next-move [random-generator {:keys [pos directions]}]
+  (if (empty? directions)
+    nil
+    {:pos pos :direction (nth (vec directions) (random-generator (count directions)))}))
 
-(defn sample-bot-move [{:keys [my-ants environment random-generator]}] 
-  (filter (comp :direction identity) (map (fn [ant-pos] (ant-next-move environment random-generator ant-pos)) (:ants my-ants))))
-
+(defn move-ants [{:keys [my-ants environment random-generator]}]
+  (filter
+    identity
+    (map
+      (partial ant-next-move random-generator)
+      (map
+        (fn [ant-pos]
+          {
+           :pos ant-pos
+           :directions (get-available-directions environment ant-pos)})
+        (:ants my-ants)))))
 ;; let's hear it for plugability
-(def next-move sample-bot-move)
+(def next-move move-ants)
