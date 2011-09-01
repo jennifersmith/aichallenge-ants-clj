@@ -11,11 +11,7 @@
 
 ;; combining parsing and reading stream stuff
 (defn read-parameters []
-  (let [lines (read-upto "ready")]
-    (reduce (fn [result [k v]] 
-           (assoc result (keyword k) v))
-           {}           
-            lines)))
+  (parse-parameters (read-upto "ready")))
 
 (defn read-turn []
   (parse-turn (read-upto "go" "end")))

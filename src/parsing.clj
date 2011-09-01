@@ -26,3 +26,15 @@
        :turn-number turn-header
         :turn-data (seq (map (partial apply parse-turn-input) turn-data-lines))})))
 
+(defn parse-parameters [lines]
+  (let
+    [raw-params
+      (reduce (fn [result [k v]] 
+           (assoc result (keyword k) v))
+           {}           
+            lines)]
+    {
+     :rows (Integer/parseInt (:rows raw-params))
+     :cols (Integer/parseInt (:cols raw-params))
+     :player_seed (Long/parseLong (:player_seed raw-params))
+     }))

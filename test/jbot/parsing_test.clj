@@ -29,4 +29,6 @@
   "end should be signified by a nil turn"
   (parse-turn [["end"]])=> nil)
 
+(fact
+  (parse-parameters [["player_seed" "22"] ["rows" "100"]  ["cols" "10"]])=> {:player_seed 22 :rows 100 :cols 10})
 

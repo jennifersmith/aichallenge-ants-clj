@@ -1,15 +1,10 @@
 (ns jbot.core_test
   (:use 
-        core
-        parsing
-        clojure.test
-        midje.sweet)
+    core
+    parsing
+    clojure.test
+    midje.sweet)
   (:require [clojure.string :as string]))
-
-(fact
-  (read-parameters)=> {:Foo "bar" :Baz "123"}
-    (provided (read-line) =streams=> ["Foo bar" "Baz 123" "ready"]))
-
 (fact
   "read-one reads and tokenizes just one line"
   (read-one) => ["A" "B"]
@@ -35,4 +30,10 @@
   "should be able to render a move"
   (render-move {:pos [40 14] :direction :n})
   => "o 40 14 N")
+
+(fact
+  (read-parameters)=> :params
+  (provided (read-upto "ready") => :input-params
+  (parse-parameters :input-params) => :params))
+
 

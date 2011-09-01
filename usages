@@ -1,6 +1,5 @@
 PRIORITIES
 
-- clear up remaining into def records 
 - parsing parameters should know their type not just read in whole lot
 - implemenet changes to get-available-directions
 - merge init-world and init
