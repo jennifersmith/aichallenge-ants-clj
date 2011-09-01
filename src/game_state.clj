@@ -48,7 +48,7 @@
   [{:keys [rows cols player_seed] :as params}] 
   (GameState.
     (init-my-ants "0")
-    (init-random-generator (Long/parseLong player_seed))
-    (init-environment (Integer/parseInt rows) (Integer/parseInt cols))))
+    (init-random-generator player_seed)
+    (init-environment rows cols))) 
 
 

@@ -32,3 +32,6 @@
 (fact
   (parse-parameters [["player_seed" "22"] ["rows" "100"]  ["cols" "10"]])=> {:player_seed 22 :rows 100 :cols 10})
 
+(fact "random can be massive!" 
+      (parse-parameters [["player_seed" "-6519445876725383498"] ["rows" "29"] ["cols" "400"]]) => 
+      (contains [[:player_seed -6519445876725383498]]))

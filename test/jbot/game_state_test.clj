@@ -11,7 +11,7 @@
   {:dimensions [rows cols]})
 
 (defn make-game-state [ants env]
-  (-> (init-game-state {:rows "20" :cols "10" :player_seed "101"})
+  (-> (init-game-state {:rows 20 :cols 10 :player_seed 101})
     (assoc :my-ants ants)
     (assoc :environment env)))
 
@@ -19,7 +19,7 @@
 (fact (init-my-ants "bob") => {:player-name "bob" :ants []})
 
 (fact (init-game-state 
-          {:rows "20" :cols "10" :player_seed "101"}) 
+          {:rows 20 :cols 10 :player_seed 101}) 
       => {
           :random-generator :new-random
           :environment :new-environment
@@ -29,10 +29,7 @@
         (init-random-generator 101) => :new-random
         (init-my-ants "0") => :new-ants))
 
-(fact "random can be massive!" (init-game-state {:player_seed "-6519445876725383498" :rows "29" :cols "400" })=> 
-      (contains [[:random-generator :foo]])
-      (provided 
-        (init-random-generator -6519445876725383498)=> :foo))
+
 (fact "figures out which ants are mine"
       (:ants (increment-state (init-my-ants "bob")  [ 
                                                                   {:type :ant :pos [20 20] :player "bob"} 
