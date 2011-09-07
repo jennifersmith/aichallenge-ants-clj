@@ -8,6 +8,20 @@
 (defn environment-with-dimensions [rows cols]
   {:dimensions [rows cols]})
 
+(tabular
+  (fact
+    (translate-pos (environment-with-dimensions 100 100) {:pos [?start-row ?start-col] :direction ?direction}) => [?expected-row ?expected-col])
+    ?start-row  ?start-col  ?direction  ?expected-row ?expected-col
+    22           14            :N           21           14
+    22           14            :E           22           15
+    22           14            :S           23           14
+    22           14            :W           22           13
+    0             0            :N           99            0
+    0             0            :W           0             99
+    99            0            :S           0             0
+    99            99           :E           99            0)
+
+
 ;; contains with nestd array doesnt appear to work ? should probably write a test case for that...
 (fact "should be able to use inbound turn data to figure out state of the game-state"
       (:tiles (increment-state

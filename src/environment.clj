@@ -1,6 +1,14 @@
 (ns environment
   (:use debug structure))
 
+(def compass->vector 
+  {
+   :N [-1 0]
+   :S [1 0]
+   :E [0 1]
+   :W [0 -1]
+   })
+
 
 (defn remove-out-of-date-info [environment]
   (let [out-of-date-tiles (for [[k v] environment :when (not= v :water)] k)] 
@@ -9,6 +17,7 @@
 (defprotocol NavigablePlane
   (get-surrounding-coords [this point])
   (get-contents [this position])
+  (translate-pos [this {:keys [pos direction]}])
   (get-available-directions [this [row col]]))
 
 (defrecord Environment [dimensions tiles]       
@@ -40,7 +49,8 @@
 
                               (map key (filter #(nil? (#{:water :food} (val %))) contents-by-direction))))
 
-
+  (translate-pos [this {:keys [pos direction]}]
+    (map + pos (get compass->vector direction)))
 
   )
 

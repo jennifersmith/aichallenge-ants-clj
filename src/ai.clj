@@ -1,7 +1,7 @@
 (ns ai
   (:use environment debug))
 
-(defn ant-next-move [random-generator {:keys [pos directions]}]
+(defn ant-next-move [ environment random-generator {:keys [pos directions]}]
   (if (empty? directions)
     nil
     {:pos pos :direction (nth (vec directions) (random-generator (count directions)))}))
@@ -10,7 +10,7 @@
   (filter
     identity
     (map
-      (partial ant-next-move random-generator)
+      (partial ant-next-move environment random-generator)
       (map
         (fn [ant-pos]
           {
