@@ -4,7 +4,7 @@
   (let [previous-history 
         (get current pos)]
   (merge-with concat previous-history
-  {:history [direction]}
+  {:directions [direction]}
   )))
 
 (defn save-ant-state [environment current new-states]
