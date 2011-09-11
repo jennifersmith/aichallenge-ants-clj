@@ -9,27 +9,35 @@
 (def row-of-nothing [nil nil nil])
 (defn random-generator [max] (rand max))
 
+
 (future-fact 
   "should filter directions that would cause a 2-segment loop to repeat"
   (remove-loops [:A :B :C] [:X :C :X]) => [:A :B])
 
 (fact
-  "return a nil if poor ant is stuck"
-  (ant-next-move (init-environment 10 10 ) random-generator {:history {} :pos [10 10] :directions []}) => nil)
+  "If only one move available just return that"
+  (preferred-moves :history [:over-there])=> [:over-there])
 
 (fact
-  "Returns a random available direction using given random generator"
-  (ant-next-move (init-environment  10  10)  rand {:history {} :pos [10 10] :directions [:E :S]}) => {:pos [10 10] :direction :S}
+  "Remove potential overlooped paths from the available dirs"
+  (preferred-moves {:directions [:N :S :E]} [:E :S]) => :loops-removed
   (provided
-    (rand 2) => 1))
+    (remove-loops [:N :S :E] [:E :S])=> :loops-removed))
 
-(future-fact
-  "Should not excessively loop"
-  (ant-next-move (init-environment 10 10) rand {:history {:directions [:E :S :E]} :pos [10 10] :directions [:S :W]}) => (contains {:direction :W})
+
+(fact
+  "return a nil if poor ant is stuck"
+  (ant-next-move {:directions []}) => nil)
+
+(fact
+  (ant-next-move 
+      {
+       :history :ant-history 
+       :pos [10 10] 
+       :directions [:Here :There] }) => {:pos [10 10] :direction :the-way-to-go}
   (provided
-    (rand 2) =streams=> [0 1]))
-
-
+    (preferred-moves :ant-history [:Here :There]) => :preferred-moves
+    (rand-nth :preferred-moves) => :the-way-to-go))
 
 (fact "Passes ant pos history and available directions to compute next move"
       (move-ants {:a :history-a :b :history-b} {:my-ants {:ants [:a :b :c]} :environment :env :random-generator :rand}) =>
@@ -38,6 +46,6 @@
         (get-available-directions :env :a) => :a-directions
         (get-available-directions :env :b) => :b-directions
         (get-available-directions :env :c) => :c-directions
-        (ant-next-move :env :rand {:pos :a :history :history-a :directions :a-directions}) => :ant-move-one
-        (ant-next-move :env :rand {:pos :b :history :history-b :directions :b-directions}) => :ant-move-two
-        (ant-next-move :env :rand {:pos :c :history {} :directions :c-directions}) => nil))
+        (ant-next-move {:pos :a :history :history-a :directions :a-directions}) => :ant-move-one
+        (ant-next-move {:pos :b :history :history-b :directions :b-directions}) => :ant-move-two
+        (ant-next-move {:pos :c :history {} :directions :c-directions}) => nil))

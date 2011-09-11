@@ -4,10 +4,18 @@
 (defn is-looping [seq]
   false)
 
-(defn remove-loops [directions previous-directions]
+(defn remove-loops [previous-directions potential-directions]
+  potential-directions)
+  (comment
   (if (nil? previous-directions)
     directions
   (filter #(not (is-looping (conj previous-directions %))) directions)))
+
+
+(defn preferred-moves [history  available-directions]
+  (if (= 1 (count available-directions))
+    available-directions
+    (remove-loops (:directions history) available-directions)))
 
 (defn calculate-directions [random-generator directions history]
   (if (= 1 (count directions)) 
@@ -15,10 +23,11 @@
     (let [directions (remove-loops directions (:directions history))]
       (nth (vec directions) (random-generator (count directions))))))
 
-(defn ant-next-move [ environment random-generator {:keys [pos directions history]}]
+(defn ant-next-move [{:keys [pos directions history]}]
   (if (empty? directions)
     nil
-    {:pos pos :direction (calculate-directions random-generator directions history)}))
+    {:pos pos :direction (rand-nth (preferred-moves history directions))}))
+   ;; {:pos pos :direction (calculate-directions random-generator directions history)}))
 
 
 
@@ -26,7 +35,7 @@
   (filter
     identity
     (map
-      (partial ant-next-move environment random-generator)
+      ant-next-move 
       (map
         (fn [ant-pos]
           {
