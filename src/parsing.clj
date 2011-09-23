@@ -19,12 +19,12 @@
   ([event-type x y player] (assoc (parse-turn-input event-type x y) :player player))
   ([event-type x y] {:type (code->event-type event-type) :pos (vec (map parse-int  [x y]))}))
 
-(defn parse-turn [[turn-header-line & remaining-lines]]
+(defn parse-turn [[turn-header-line & turn-data-lines]]
   (if-let [turn-header (apply read-turn-header turn-header-line)]
-    (let [turn-data-lines (butlast remaining-lines)]
+    
       {
        :turn-number turn-header
-        :turn-data (dbg (seq (map (partial apply parse-turn-input) turn-data-lines)))})))
+        :turn-data (seq (map (partial apply parse-turn-input) turn-data-lines))}))
 
 (defn parse-parameters [lines]
   (let
