@@ -14,7 +14,7 @@
   (parse-parameters (read-upto "ready")))
 
 (defn read-turn []
-  (parse-turn (dbg (vec (read-upto "go" "end")))))
+  (parse-turn  (read-upto "go" "end")))
 
   ;; and finally... render!
 
