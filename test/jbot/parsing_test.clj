@@ -26,6 +26,10 @@
     (parse-turn-input "data2") => :two))
 
 (fact 
+  "WTF"
+  (parse-turn ['("turn" "35") '("a" "24" "61" "0")]) => {:turn-number 1 :turn-data [{:type :ant :pos [24 61] :player "0"}]})
+
+(fact 
   "end should be signified by a nil turn"
   (parse-turn [["end"]])=> nil)
 

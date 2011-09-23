@@ -5,14 +5,18 @@
         clojure.test
         midje.sweet))
 
-(def row-of-water [:water :water :water])
-(def row-of-nothing [nil nil nil])
-(defn random-generator [max] (rand max))
-
-
-(future-fact 
+(fact
   "should filter directions that would cause a 2-segment loop to repeat"
-  (remove-loops [:A :B :C] [:X :C :X]) => [:A :B])
+  (remove-loops [:Y :Y :Y :X :C :X] [:A :B :C]) => [:A :B])
+
+(fact 
+  "dont do anything if moves history too short"
+  (remove-loops [:C :X] [:A :B :C]) => [:A :B :C]
+  (remove-loops [:X] [:A :B :C]) => [:A :B :C])
+
+(fact 
+  "return everything if no loops"
+  (remove-loops [:X :Y] [:A :B :C]) => [:A :B :C])
 
 (fact
   "If only one move available just return that"
@@ -24,6 +28,9 @@
   (provided
     (remove-loops [:N :S :E] [:E :S])=> :loops-removed))
 
+(fact
+  "If no history don't remove loops"
+  (preferred-moves {} [:E :S]) => [:E :S])
 
 (fact
   "return a nil if poor ant is stuck"

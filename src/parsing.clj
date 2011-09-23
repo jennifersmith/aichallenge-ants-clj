@@ -24,7 +24,7 @@
     (let [turn-data-lines (butlast remaining-lines)]
       {
        :turn-number turn-header
-        :turn-data (seq (map (partial apply parse-turn-input) turn-data-lines))})))
+        :turn-data (dbg (seq (map (partial apply parse-turn-input) turn-data-lines)))})))
 
 (defn parse-parameters [lines]
   (let

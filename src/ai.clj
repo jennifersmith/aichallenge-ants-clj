@@ -2,36 +2,34 @@
   (:use environment debug))
 
 (defn is-looping [seq]
-  false)
-
-(defn remove-loops [previous-directions potential-directions]
-  potential-directions)
-  (comment
-  (if (nil? previous-directions)
-    directions
-  (filter #(not (is-looping (conj previous-directions %))) directions)))
-
+ (dbg seq)
+ (dbg (let [[a b &rest]  (partition 2 (reverse seq))] (= a b))))
+(defn remove-loops [previous-directions directions]
+  (let 
+    [previous-directions (vec previous-directions)]
+  (map
+    last
+    (filter (comp not is-looping) (map (partial conj previous-directions) directions)))))
 
 (defn preferred-moves [history  available-directions]
-  (if (= 1 (count available-directions))
+  (dbg available-directions)
+  (if (or (= 1 (count available-directions)) (empty? history))
     available-directions
     (remove-loops (:directions history) available-directions)))
 
-(defn calculate-directions [random-generator directions history]
-  (if (= 1 (count directions)) 
-    (first directions)
-    (let [directions (remove-loops directions (:directions history))]
-      (nth (vec directions) (random-generator (count directions))))))
-
 (defn ant-next-move [{:keys [pos directions history]}]
+  (dbg "ANT NEXT MOVE")
+  (dbg pos)
+  (dbg (vec directions))
   (if (empty? directions)
     nil
-    {:pos pos :direction (rand-nth (preferred-moves history directions))}))
-   ;; {:pos pos :direction (calculate-directions random-generator directions history)}))
+    {:pos pos :direction (dbg (rand-nth (preferred-moves history directions)))}))
 
 
 
 (defn move-ants [ history {:keys [my-ants environment random-generator]}]
+  (dbg "We got ants")
+  (dbg (count (:ants  my-ants)))
   (filter
     identity
     (map

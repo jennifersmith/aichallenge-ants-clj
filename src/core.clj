@@ -4,7 +4,7 @@
 (defn read-input []
   (map tokenize (repeatedly read-line)))
 
-(defn read-one [] (first (read-input)))
+(defn read-one [] (first  (read-input)))
 
 (defn read-upto [& stop-tokens]
   (doall (take-while #(empty? (clojure.set/intersection (set stop-tokens) (set %))) (read-input))))
@@ -14,7 +14,7 @@
   (parse-parameters (read-upto "ready")))
 
 (defn read-turn []
-  (parse-turn (read-upto "go" "end")))
+  (parse-turn (dbg (vec (read-upto "go" "end")))))
 
   ;; and finally... render!
 
@@ -30,12 +30,12 @@
   (let [parameters (read-parameters) ]
     (do (println "go") (.flush System/out)) 
     (loop [game-state (init-game-state parameters) game-history {} ] 
-      (if-let [turn (read-turn)] 
+      (if-let [turn (read-turn)]
         (let [
               game-state (increment-state game-state (:turn-data turn))
               next-moves (next-move game-history game-state)]
+          (dump "TURN " (:turn-number turn))
           (doseq [line (map render-move next-moves)]
-            (dump game-history)
             (println line)
             )
           (println "go")
