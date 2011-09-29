@@ -1,12 +1,19 @@
-(ns jbot.game-state_test
+(ns jbot.environment_test
   (:use 
         core
         environment
+        structure
         clojure.test
         midje.sweet))
 
 (defn environment-with-dimensions [rows cols]
-  {:dimensions [rows cols]})
+  (init-environment rows cols) 
+  )
+
+(defn environment-with-tiles [tiles]
+  (assoc
+    (init-environment 100 100) :tiles tiles)
+  )
 
 (tabular
   (fact
@@ -24,8 +31,9 @@
 
 ;; contains with nestd array doesnt appear to work ? should probably write a test case for that...
 (fact "should be able to use inbound turn data to figure out state of the game-state"
-      (:tiles (increment-state
-        {:tiles {[29 29] :water [20 10] :food }}
+     (:tiles (increment-state
+       (environment-with-tiles 
+        {[29 29] :water [20 10] :food }) 
         [
          {:type :water :pos [15 50]}
          {:type :food :pos [1 2]}
@@ -34,7 +42,7 @@
          {:type :ant :pos [5 2] :player "bob"}
          {:type :dead-ant :pos [2 1] :player "bob"}
          {:type :dead-ant :pos [25 14] :player "ralph"}
-         ]))
+         ])) 
       => {
                            [29 29] :water 
                            [15 50] :water
@@ -68,42 +76,41 @@
      [[0  48] [0  49] [0 0]]])
 
 (fact "returns what is in the square" 
-    (get-contents {:tiles {[10 20] :water}} [5 5]) => nil
-    (get-contents {:tiles {[10 20] :water}} [10 20]) => :water)
+    (get-contents (environment-with-tiles {[10 20] :water}) [5 5]) => nil
+    (get-contents (environment-with-tiles {[10 20] :water}) [10 20]) => :water)
 
 (fact
   "when there is water everywhere, returns empty. Nowhere to run for this wee ant"
-  (get-available-directions  :env [10 10])
+  (get-available-directions (environment-with-tiles {}) [10 10])
     => ()
   (provided
-    (game-state/get-surrounding-coords :env [10 10]) => fake-coordinates
-    (game-state/get-contents :env anything)=> :water))
+    (get-surrounding-coords anything [10 10]) => fake-coordinates
+     (get-contents anything anything)=> :water))
 
 (fact 
   "when there are no obstructions, you can go anywhere"
-  (get-available-directions :env [15 15]) => (just [:N :E :S :W] :in-any-order)
+  (get-available-directions (environment-with-tiles []) [15 15]) => {:N [14 15] :E [15 16] :S [16 15]  :W [15 14] }
   (provided
-    (game-state/get-surrounding-coords  :env [15 15]) => fake-coordinates
-    (game-state/get-contents :env anything) => nil))
+    (get-contents anything anything) => nil))
 
 (fact 
   "only returns directions without obstructions"
-  (get-available-directions :env [60 60]) => (just [:E :S] :in-any-order)
+  (get-available-directions :env [60 60]) => {:E [60 61] :S [61 60] }
   (provided
-    (game-state/get-surrounding-coords :env [60 60]) => fake-coordinates
-    (game-state/get-contents :env :N) => :water
-    (game-state/get-contents :env :E) => nil
-    (game-state/get-contents :env :S) => nil
-    (game-state/get-contents :env :W) => :water))
+    (get-surrounding-coords :env [60 60]) => fake-coordinates
+    (get-contents :env :N) => :water
+    (get-contents :env :E) => nil
+    (get-contents :env :S) => nil
+    (get-contents :env :W) => :water))
 
 (fact "only water and food is an obstruction"
-      (get-available-directions :env [60 60]) => (just [:W :S] :in-any-order)
+      (get-available-directions :env [60 60]) => { :W [60 59] :S [61 60]}
       (provided
-        (game-state/get-surrounding-coords :env [60 60]) => fake-coordinates
-        (game-state/get-contents :env :N) => :food
-        (game-state/get-contents :env :E) => :water
-        (game-state/get-contents :env :S) => :ant
-        (game-state/get-contents :env :W) => :beer))
+        (get-surrounding-coords :env [60 60]) => fake-coordinates
+        (get-contents :env :N) => :food
+        (get-contents :env :E) => :water
+        (get-contents :env :S) => :ant
+        (get-contents :env :W) => :beer))
 
 
 

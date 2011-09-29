@@ -1,29 +1,29 @@
 (ns ai
   (:use environment debug))
 
-(defn is-looping [seq]
- (dbg seq)
- (dbg (let [[a b &rest]  (partition 2 (reverse seq))] (= a b))))
-(defn remove-loops [previous-directions directions]
-  (let 
-    [previous-directions (vec previous-directions)]
-  (map
-    last
-    (filter (comp not is-looping) (map (partial conj previous-directions) directions)))))
-
-(defn preferred-moves [history  available-directions]
-  (dbg available-directions)
-  (if (or (= 1 (count available-directions)) (empty? history))
-    available-directions
-    (remove-loops (:directions history) available-directions)))
+(defn preferred-moves [current-pos history  available-directions]
+(dbg  (vec (map key
+       (if (or (= 1 (count available-directions)) (empty? history))
+         available-directions
+         (let
+           [last-positions (set (take-last 10 (:positions history)))
+            visited-positions-from-available (map key (filter #(last-positions (val %)) available-directions ))  ] 
+            (reduce
+              (fn [directions historic-position]
+                (if (> 1 (count directions))
+                  (dissoc directions historic-position)
+                  directions)
+                  
+                )
+                  available-directions 
+                  last-positions)
+              available-directions
+            ))))))
 
 (defn ant-next-move [{:keys [pos directions history]}]
-  (dbg "ANT NEXT MOVE")
-  (dbg pos)
-  (dbg (vec directions))
   (if (empty? directions)
     nil
-    {:pos pos :direction (dbg (rand-nth (preferred-moves history directions)))}))
+    {:pos pos :direction (dbg (rand-nth (preferred-moves pos history directions)))}))
 
 
 

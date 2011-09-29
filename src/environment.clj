@@ -17,6 +17,7 @@
 (defprotocol NavigablePlane
   (get-surrounding-coords [this point])
   (get-contents [this position])
+  (wrap-coords [this [x y]])
   (translate-pos [this {:keys [pos direction]}])
   (get-available-directions [this [row col]]))
 
@@ -27,30 +28,37 @@
                      (assoc this 
                             :tiles (merge previous-environment (zipmap (map :pos new-information) (map :type new-information))))))
   NavigablePlane
+  (wrap-coords [this [row col]]
+               (let [[grid-rows grid-cols] dimensions]
+                [(mod row grid-rows) (mod col grid-cols)])    
+               )
   (get-surrounding-coords [this [curr-row curr-col]]
-                               (let [[grid-rows grid-cols] dimensions]
+                         
                                  (partition 3 
                                             (for [
                                                   row (map (partial + curr-row) (range -1 2)) 
                                                   col (map (partial + curr-col) (range -1 2))]
-                                              [(mod row grid-rows) (mod col grid-cols)]))))
+                                              (wrap-coords this [row col])
+                                              )))
   (get-contents [this position] (get tiles  position))
   (get-available-directions [this position]
                             (let [
                                   [[_ N _]
                                    [W _ E]
                                    [_ S _]]
-                                  (get-surrounding-coords  this  position)
-                                  directions 
-                                  {:N N :E E :S S :W W}
+                                  (dbg (get-surrounding-coords  this  position))
+                                  directions {:N N :E E :S S :W W}
+                                  
                                   contents-by-direction
                                   (zipmap [:N :E :S :W] (map (partial get-contents this) [N E S W]))
                                   ]
-
-                              (map key (filter #(nil? (#{:water :food} (val %))) contents-by-direction))))
+                              
+                                      
+                              (filter (fn [[dir pos]] (nil? ( #{:water :food} (get-contents this pos)))) directions)))
 
   (translate-pos [this {:keys [pos direction]}]
-    (map + pos (get compass->vector direction)))
+    (wrap-coords this 
+    (map + pos (get compass->vector direction))))
 
   )
 

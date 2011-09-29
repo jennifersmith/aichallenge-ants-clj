@@ -6,44 +6,38 @@
         midje.sweet))
 
 (fact
-  "should filter directions that would cause a 2-segment loop to repeat"
-  (remove-loops [:Y :Y :Y :X :C :X] [:A :B :C]) => [:A :B])
-
-(fact 
-  "dont do anything if moves history too short"
-  (remove-loops [:C :X] [:A :B :C]) => [:A :B :C]
-  (remove-loops [:X] [:A :B :C]) => [:A :B :C])
-
-(fact 
-  "return everything if no loops"
-  (remove-loops [:X :Y] [:A :B :C]) => [:A :B :C])
-
-(fact
   "If only one move available just return that"
-  (preferred-moves :history [:over-there])=> [:over-there])
+  (preferred-moves :current-pos :history {:S :over-there})=> [:S])
 
 (fact
-  "Remove potential overlooped paths from the available dirs"
-  (preferred-moves {:directions [:N :S :E]} [:E :S]) => :loops-removed
-  (provided
-    (remove-loops [:N :S :E] [:E :S])=> :loops-removed))
+  "Remove recent positions from the available dirs"
+  (preferred-moves [20 10] {:positions [:here :there]} {:E :here :S :brand-new-pos}) => [ :S] 
+  )
 
 (fact
-  "If no history don't remove loops"
-  (preferred-moves {} [:E :S]) => [:E :S])
+  "ignore history greater than 10 moves old"
+  (preferred-moves [20 10] {:positions [:here :there :somehwere :nowhere :there :outer-space :saturn :jupiter :bangor :venice :plano]} {:E :here :S :new-place}) => [:E :S])
+
+
+(fact
+  "If no history don't remove recent positions"
+  (preferred-moves [] {}  {:E :there :S :here}) => [:E :S])
+(fact
+  "If removing recent history results in no routes, remove only the most recent"
+  (preferred-moves [10 10] {:positions  [:there :here :mars :chicago]} {:E :there :W :chicago } )=> [:E]) 
 
 (fact
   "return a nil if poor ant is stuck"
-  (ant-next-move {:directions []}) => nil)
+  (ant-next-move {:directions {}}) => nil)
 
 (fact
   (ant-next-move 
       {
        :history :ant-history 
        :pos [10 10] 
-       :directions [:Here :There] }) => {:pos [10 10] :direction :the-way-to-go}
+       :directions {:foo :bar}}) => {:pos [10 10] :direction :the-way-to-go}
   (provided
-    (preferred-moves :ant-history [:Here :There]) => :preferred-moves
+    (preferred-moves [10 10] :ant-history {:foo :bar}) => :preferred-moves
     (rand-nth :preferred-moves) => :the-way-to-go))
 
 (fact "Passes ant pos history and available directions to compute next move"
@@ -56,3 +50,5 @@
         (ant-next-move {:pos :a :history :history-a :directions :a-directions}) => :ant-move-one
         (ant-next-move {:pos :b :history :history-b :directions :b-directions}) => :ant-move-two
         (ant-next-move {:pos :c :history {} :directions :c-directions}) => nil))
+
+

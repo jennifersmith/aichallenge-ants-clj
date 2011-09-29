@@ -1,10 +1,10 @@
 (ns memoization (:use environment))
 
-(defn direction-history [current {:keys [pos direction]}]
+(defn direction-history [current {:keys [pos]}]
   (let [previous-history 
         (get current pos)]
   (merge-with concat previous-history
-  {:directions [direction]}
+  {:positions [pos]}
   )))
 
 (defn save-ant-state [environment current new-states]
