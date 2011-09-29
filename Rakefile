@@ -29,7 +29,7 @@ end
 task :play => :pack do
 	hunter = "\"python tools/sample_bots/python/HunterBot.py\"" 
 	lefty = "\"python tools/sample_bots/python/LeftyBot.py\"" 
-	sh "./tools/playgame.py --player_seed 42 --end_wait=0.25 --verbose --log_dir game_logs --turns 400 --map_file tools/maps/symmetric_maps/symmetric_10.map #{run_str} #{hunter} #{lefty} #{hunter}" 
+	sh "./tools/playgame.py --player_seed 42 --end_wait=0.25 --verbose --log_dir game_logs --turns 400 --map_file tools/maps/maze/maze_9.map #{run_str} #{hunter} #{lefty} #{hunter}" 
 	dump_log
 end
 

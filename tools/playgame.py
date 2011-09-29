@@ -8,8 +8,11 @@ from optparse import OptionParser, OptionGroup
 import random
 import cProfile
 import visualizer.visualize_locally
-import StringIO
 import json
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 from ants import Ants
 
@@ -137,6 +140,9 @@ def main(argv):
     game_group.add_option("--attack", dest="attack",
                           default="focus",
                           help="Attack method to use for engine. (closest, focus, support, damage)")
+    game_group.add_option("--kill_points", dest="kill_points",
+                          default=2, type="int",
+                          help="Points awarded for killing an ant shared by all ants involved")
     game_group.add_option("--food", dest="food",
                           default="symmetric",
                           help="Food spawning method. (none, random, sections, symmetric)")
@@ -261,6 +267,7 @@ def run_rounds(opts,args):
     game_options = {
         "map": opts.map,
         "attack": opts.attack,
+        "kill_points": opts.kill_points,
         "food": opts.food,
         "viewradius2": opts.viewradius2,
         "attackradius2": opts.attackradius2,
@@ -394,7 +401,7 @@ def run_rounds(opts,args):
 
         # intercept replay log so we can add player names
         if opts.log_replay:
-            intcpt_replay_io = StringIO.StringIO()
+            intcpt_replay_io = StringIO()
             real_replay_io = engine_options['replay_log']
             engine_options['replay_log'] = intcpt_replay_io
 
